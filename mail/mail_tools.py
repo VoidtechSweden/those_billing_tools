@@ -9,7 +9,7 @@ from utils import basic_tools, input_tools
 
 class server_settings:
     SMTP_SERVER = Configuration.get("mail", "smtp_server")
-    SMTP_PORT = Configuration.get("mail", "smtp_port")
+    SMTP_PORT = Configuration.getint("mail", "smtp_port")
     SMTP_USER = Configuration.get("mail", "smtp_user")
     SMTP_PASSWORD = ""
 
@@ -33,10 +33,13 @@ def send_email(email_info, attachment_path):
     print("================================")
     if attachment_path is not None:
         print(f"FILE: {attachment_path}")
-    print(f"FROM: <{server_settings.SMTP_USER}>")
-    print(f"TO:   <{email_info.recipient}>")
-    if email_info.cc_recipient:
-        print(f"CC:   <{email_info.cc_recipient}>")
+    print(f"FROM: <{Configuration.get("mail", "my_email")}>")
+    if Configuration.getboolean("debug", "mail_to_self_only"):
+        print(f"TO:   <{Configuration.get("mail", "my_email")}> (DEBUG MODE)")
+    else:
+        print(f"TO:   <{email_info.recipient}>")
+        if email_info.cc_recipient:
+            print(f"CC:   <{email_info.cc_recipient}>")
     print(f"SUBJECT: '{email_info.subject_text}'")
     print(f"BODY:    '{email_info.body_text}'")
     print("================================")
@@ -45,12 +48,19 @@ def send_email(email_info, attachment_path):
     # Create the container email message.
     msg = EmailMessage()
     msg["Subject"] = email_info.subject_text
-    msg["From"] = server_settings.SMTP_USER
-    msg["To"] = email_info.recipient
+    msg["From"] = Configuration.get("mail", "my_email")
+    if Configuration.getboolean("debug", "mail_to_self_only"):
+        print(
+            "DEBUG: Overriding recipient to send mail to self only (debug_mail_to_self_only=True)"
+        )
+        msg["To"] = Configuration.get("mail", "my_email")
+    else:
+        msg["To"] = email_info.recipient
+        if email_info.cc_recipient:
+            msg["Cc"] = email_info.cc_recipient
+
     msg.set_content(email_info.body_text)
-    if email_info.cc_recipient:
-        msg["Cc"] = email_info.cc_recipient
-    msg["Bcc"] = server_settings.SMTP_USER  # Bcc to self
+    msg["Bcc"] = Configuration.get("mail", "my_email")  # Bcc to self
 
     if attachment_path is not None:
         # Deduct mime type of the file
@@ -74,19 +84,26 @@ def send_email(email_info, attachment_path):
     # Send the email via the specified SMTP server using STARTTLS.
     try:
 
-        if not server_settings.SMTP_PASSWORD:
-            server_settings.SMTP_PASSWORD = input_tools.input_password(
-                "Enter password to SMTP server"
-            )
+        print(
+            f"Connecting to SMTP server {server_settings.SMTP_SERVER}:{server_settings.SMTP_PORT}"
+        )
 
         with smtplib.SMTP(
-            server_settings.SMTP_SERVER, server_settings.SMTP_PORT
+            host=server_settings.SMTP_SERVER, port=server_settings.SMTP_PORT, timeout=20
         ) as smtp_connection:
+            print("Sending ehlo...")
             smtp_connection.ehlo()
+            print("Starting TLS...")
             smtp_connection.starttls()
+            if not server_settings.SMTP_PASSWORD:
+                server_settings.SMTP_PASSWORD = input_tools.input_password(
+                    "Enter password to SMTP server"
+                )
+            print("Logging in to SMTP server...")
             smtp_connection.login(
                 server_settings.SMTP_USER, server_settings.SMTP_PASSWORD
             )
+            print("Sending e-mail...")
             response = smtp_connection.send_message(msg)
             if response:  # send_message returns a dictionary of failed recipients
                 print(f"Failed to send email: {response}")

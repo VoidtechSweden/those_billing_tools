@@ -53,16 +53,33 @@ class Configuration:
                     )
 
     @staticmethod
-    def get(section, option):
+    def __internal_get(section, option, type=str):
         if Configuration._CONFIG is None:
             Configuration.__load()
         try:
-            value = Configuration._CONFIG.get(section, option)
+            if type == bool:
+                value = Configuration._CONFIG.getboolean(section, option)
+            elif type == int:
+                value = Configuration._CONFIG.getint(section, option)
+            else:
+                value = Configuration._CONFIG.get(section, option)
         except (configparser.NoSectionError, configparser.NoOptionError):
             value = None
             assert False, f"Missing configuration for [{section}] {option}"
 
         return value
+
+    @staticmethod
+    def get(section, option):
+        return Configuration.__internal_get(section, option, str)
+
+    @staticmethod
+    def getboolean(section, option):
+        return Configuration.__internal_get(section, option, bool)
+
+    @staticmethod
+    def getint(section, option):
+        return Configuration.__internal_get(section, option, int)
 
     @staticmethod
     def get_invoice_pattern():
