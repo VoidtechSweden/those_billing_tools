@@ -5,25 +5,27 @@ import importlib
 import os
 
 
-def register_pattern_module(cls):
-    PatternModuleRegistry.register(cls)
+def register_substitution_module(cls):
+    SubstitutionModuleRegistry.register(cls)
     return cls
 
 
-class PatternModuleRegistry:
+class SubstitutionModuleRegistry:
     _registry = []
 
     @classmethod
-    def register(cls, pattern_module_class):
-        cls._registry.append(pattern_module_class)
+    def register(cls, substitution_module_class):
+        cls._registry.append(substitution_module_class)
 
     @classmethod
     def _load_modules(cls):
         current_dir = os.path.dirname(os.path.relpath(__file__))
-        pattern_files = glob.glob(os.path.join(current_dir, "*_pattern.py"))
-        for pattern_file in pattern_files:
+        substitution_files = glob.glob(os.path.join(current_dir, "*_substitution.py"))
+        for substitution_file in substitution_files:
             module_name = (
-                pattern_file.replace("/", ".").replace("\\", ".").replace(".py", "")
+                substitution_file.replace("/", ".")
+                .replace("\\", ".")
+                .replace(".py", "")
             )
             importlib.import_module(module_name)
 
@@ -34,7 +36,7 @@ class PatternModuleRegistry:
         return cls._registry
 
 
-class PatternModule(ABC):
+class SubstitutionModule(ABC):
 
     @abstractmethod
     def match(self):
@@ -51,8 +53,3 @@ class PatternModule(ABC):
     def to_string(self):
         """The output string for the pattern"""
         assert False, "You must implement to_string() method"
-
-    @abstractmethod
-    def is_mandatory(self):
-        """Whether this pattern is mandatory to find"""
-        assert False, "You must implement is_mandatory() method"

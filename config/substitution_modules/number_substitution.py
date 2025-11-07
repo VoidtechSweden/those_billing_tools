@@ -1,8 +1,11 @@
-from config.pattern_modules.pattern_module import PatternModule, register_pattern_module
+from config.substitution_modules.substitution_module import (
+    SubstitutionModule,
+    register_substitution_module,
+)
 
 
-@register_pattern_module
-class NumberPattern(PatternModule):
+@register_substitution_module
+class NumberSubstitution(SubstitutionModule):
 
     def __init__(self):
         self.__invoice_number = None
@@ -16,9 +19,6 @@ class NumberPattern(PatternModule):
 
     def to_string(self):
         return self.__invoice_number.__str__()
-
-    def is_mandatory(self):
-        return True
 
     def set_number(self, invoice_number):
         self.__invoice_number = invoice_number

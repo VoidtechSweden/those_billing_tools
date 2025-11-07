@@ -1,9 +1,12 @@
 import os
-from config.pattern_modules.pattern_module import PatternModule, register_pattern_module
+from config.substitution_modules.substitution_module import (
+    SubstitutionModule,
+    register_substitution_module,
+)
 
 
-@register_pattern_module
-class CurrentDirPattern(PatternModule):
+@register_substitution_module
+class CurrentDirSubstitution(SubstitutionModule):
 
     def match(self):
         assert False, "CurrentDirPattern does not support matching"
@@ -14,6 +17,3 @@ class CurrentDirPattern(PatternModule):
 
     def to_string(self):
         return os.getcwd()
-
-    def is_mandatory(self):
-        return False

@@ -1,8 +1,9 @@
-from config.pattern_modules.pattern_module import PatternModule
+from config.substitution_modules.substitution_module import SubstitutionModule
 import re
 
 
-class StaticStringPattern(PatternModule):
+class StaticStringSubstitution(SubstitutionModule):
+    """A dummy module that always matches a static string"""
 
     def __init__(self, static_string):
         super().__init__()
@@ -19,6 +20,3 @@ class StaticStringPattern(PatternModule):
 
     def to_string(self):
         return self.__static_string
-
-    def is_mandatory(self):
-        return False

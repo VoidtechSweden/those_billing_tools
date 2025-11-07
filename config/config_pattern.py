@@ -1,5 +1,5 @@
 import re
-from config.pattern_modules.pattern_module import PatternModuleRegistry
+from config.substitution_modules.substitution_module import SubstitutionModuleRegistry
 
 
 class ConfigPattern:
@@ -8,21 +8,23 @@ class ConfigPattern:
         self.__modules = []
 
     def create(self, string):
-        """Given a pattern string, extract and return a list of PatternModule instances representing the pattern."""
+        """Given a pattern string, extract and return a list of SubstitutionModule instances representing the pattern."""
 
-        def create_pattern_module(string):
+        def create_substitution_module(string):
             if string.startswith("{") and string.endswith("}"):
-                pattern_name = string[1:-1]
-                for pattern_class in PatternModuleRegistry.get_registered_modules():
-                    if pattern_class.name() == pattern_name:
-                        return pattern_class()
-                assert False, f"Unknown pattern '{pattern_name}'"
+                substitution_name = string[1:-1]
+                for (
+                    substitution_class
+                ) in SubstitutionModuleRegistry.get_registered_modules():
+                    if substitution_class.name() == substitution_name:
+                        return substitution_class()
+                assert False, f"Unknown substitution '{substitution_name}'"
             else:
-                from config.pattern_modules.staticstring_pattern import (
-                    StaticStringPattern,
+                from config.substitution_modules.staticstring_substitution import (
+                    StaticStringSubstitution,
                 )
 
-                return StaticStringPattern(string)
+                return StaticStringSubstitution(string)
 
         current = ""
         in_braces = False
@@ -33,20 +35,26 @@ class ConfigPattern:
                 else:
                     in_braces = True
                     if current:
-                        self.__modules.append(create_pattern_module(current))
+                        self.__modules.append(create_substitution_module(current))
                     current = char
             elif char == "}":
                 if in_braces:
                     in_braces = False
                     current += char
-                    self.__modules.append(create_pattern_module(current))
+                    self.__modules.append(create_substitution_module(current))
                     current = ""
                 else:
                     current += char
             else:
                 current += char
         if current:
-            self.__modules.append(create_pattern_module(current))
+            self.__modules.append(create_substitution_module(current))
+
+    def contains_number(self):
+        for module in self.__modules:
+            if module.name() == "number":
+                return True
+        return False
 
     def get_regexp(self):
         regexp = ""
@@ -66,11 +74,15 @@ class ConfigPattern:
         return string
 
     def set_number(self, number):
+        assert (
+            self.contains_number()
+        ), "Pattern does not contain a 'number' substitution module"
+
         for module in self.__modules:
             if module.name() == "number":
                 module.set_number(number)
 
-    def find_pattern(self, targetmodule, text):
+    def find_substitution_value(self, targetmodule, text):
         """Find and return the value of the first occurrence of the pattern module in the given text."""
 
         start_regexp = ""

@@ -1,9 +1,12 @@
 from config.config import Configuration
-from config.pattern_modules.pattern_module import PatternModule, register_pattern_module
+from config.substitution_modules.substitution_module import (
+    SubstitutionModule,
+    register_substitution_module,
+)
 
 
-@register_pattern_module
-class CompanyPattern(PatternModule):
+@register_substitution_module
+class CompanySubstitution(SubstitutionModule):
 
     def match(self):
         return Configuration.get("billing", "company")
@@ -14,6 +17,3 @@ class CompanyPattern(PatternModule):
 
     def to_string(self):
         return Configuration.get("billing", "company")
-
-    def is_mandatory(self):
-        return False

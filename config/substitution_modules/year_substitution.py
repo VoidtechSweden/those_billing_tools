@@ -1,9 +1,12 @@
 from datetime import date
-from config.pattern_modules.pattern_module import PatternModule, register_pattern_module
+from config.substitution_modules.substitution_module import (
+    SubstitutionModule,
+    register_substitution_module,
+)
 
 
-@register_pattern_module
-class YearPattern(PatternModule):
+@register_substitution_module
+class YearSubstitution(SubstitutionModule):
 
     def match(self):
         return r"\b\d{4}\b"  # Four numbers only
@@ -14,6 +17,3 @@ class YearPattern(PatternModule):
 
     def to_string(self):
         return date.today().year.__str__()
-
-    def is_mandatory(self):
-        return False

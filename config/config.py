@@ -39,6 +39,12 @@ class Configuration:
                 if section == "billing" and option == "invoice_pattern":
                     # Save invoice pattern separately
                     Configuration._INVOICE_PATTERN.create(value)
+
+                    # validate that pattern contains mandatory 'number' substitution module
+                    assert (
+                        Configuration._INVOICE_PATTERN.contains_number()
+                    ), "Invoice name pattern must contain a '{number}' substitution module"
+
                 elif "{" in value and "}" in value:
                     replacement_pattern = ConfigPattern()
                     replacement_pattern.create(value)

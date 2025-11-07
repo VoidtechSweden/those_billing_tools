@@ -56,7 +56,7 @@ def get_all_existing_invoice_numbers():
     for invoice_file in invoice_files:
         try:
             bill_number = int(
-                Configuration.get_invoice_pattern().find_pattern(
+                Configuration.get_invoice_pattern().find_substitution_value(
                     "number", os.path.basename(invoice_file)
                 )
             )
@@ -107,7 +107,9 @@ def create_invoice_path(invoice_number):
     """
 
     invoice_name = create_invoice_name(invoice_number)
-    last_invoice_file = get_invoice_path_from_nr(invoice_number - 1)
+
+    last_invoice = get_latest_invoice_nr()
+    last_invoice_file = get_invoice_path_from_nr(last_invoice)
 
     return os.path.join(
         (
