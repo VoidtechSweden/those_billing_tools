@@ -32,15 +32,17 @@ def main():
     invoice_path = billing_tools.get_invoice_path_from_nr(invoice_number)
     if not invoice_path:
         basic_tools.paused_exit(f"Could not find invoice {invoice_number}")
-    pdf_path = invoice_path.replace(".xlsx", ".pdf")
-    if not os.path.exists(pdf_path):
-        basic_tools.paused_exit(f"Could not find PDF file '{pdf_path}'")
+    if Configuration.get("mail", "send_pdf"):
+        pdf_path = invoice_path.replace(".xlsx", ".pdf")
+        if not os.path.exists(pdf_path):
+            basic_tools.paused_exit(f"Could not find PDF file '{pdf_path}'")
 
-    # Send the bill emails
-    if not mail_tools.send_email(PDF_EMAIL_INFO, attachment_path=pdf_path):
-        basic_tools.paused_exit("Could not send PDF invoice email")
+    # Send the invoice emails
     if not mail_tools.send_email(BILL_EMAIL_INFO, attachment_path=invoice_path):
         basic_tools.paused_exit("Could not send Excel invoice email")
+    if Configuration.get("mail", "send_pdf"):
+        if not mail_tools.send_email(PDF_EMAIL_INFO, attachment_path=pdf_path):
+            basic_tools.paused_exit("Could not send PDF invoice email")
 
     basic_tools.paused_exit("Invoices sent!")
 

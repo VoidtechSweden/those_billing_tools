@@ -2,20 +2,13 @@ import os
 import re
 import subprocess
 
-from utils import basic_tools
+from utils import basic_tools, input_tools
 
 from config.config import Configuration
 
 SOFFICE_PATH = "C:\\Program Files\\LibreOffice\\program\\soffice.exe"
 
 BILL_FILE_TYPE = ".xlsx"
-
-
-class BillFields:
-    NUMBER_FIELD = "G18"
-    MONTH_FIELD = "G19"
-    DATE_FIELD = "G20"
-    HOURS_FIELD = "C28"
 
 
 def __find_all_invoices():
@@ -191,6 +184,32 @@ def convert_to_pdf(invoice_path):
     else:
         print("Cannot create PDF. LibreOffice is not installed on this computer.")
     return pdf_path
+
+
+def get_invoice_template_file():
+    """
+    Get the billing template file to use
+    """
+    template_prefix = Configuration.get("billing", "template_prefix")
+    template_path = Configuration.get("billing", "template_path")
+    template_files = [
+        os.path.join(template_path, f)
+        for f in os.listdir(template_path)
+        if os.path.isfile(os.path.join(template_path, f))
+        and f.startswith(template_prefix)
+        and f.endswith(".xlsx")
+    ]
+    if not template_files:
+        basic_tools.paused_exit(
+            f"No template file with prefix '{template_prefix}' found in '{template_path}'"
+        )
+    elif len(template_files) == 1:
+        template_file = template_files[0]
+    else:
+        template_file = input_tools.select_indexed_item(
+            "Select a billing template", template_files
+        )
+    return template_file
 
 
 if __name__ == "__main__":
