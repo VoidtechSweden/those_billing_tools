@@ -3,7 +3,6 @@ import smtplib
 from email.message import EmailMessage
 import mimetypes
 
-from billing.billing_tools import BillInfo
 from config.config import Configuration
 from utils import basic_tools, input_tools
 
@@ -30,7 +29,7 @@ def send_email(email_info, attachment_path):
     """
     sent = False
 
-    print(f"MAIL:")
+    print("MAIL:")
     print("================================")
     if attachment_path is not None:
         print(f"FILE: {attachment_path}")
@@ -77,7 +76,7 @@ def send_email(email_info, attachment_path):
 
         if not server_settings.SMTP_PASSWORD:
             server_settings.SMTP_PASSWORD = input_tools.input_password(
-                f"Enter password to SMTP server"
+                "Enter password to SMTP server"
             )
 
         with smtplib.SMTP(
@@ -85,7 +84,9 @@ def send_email(email_info, attachment_path):
         ) as smtp_connection:
             smtp_connection.ehlo()
             smtp_connection.starttls()
-            smtp_connection.login(server_settings.SMTP_USER, password)
+            smtp_connection.login(
+                server_settings.SMTP_USER, server_settings.SMTP_PASSWORD
+            )
             response = smtp_connection.send_message(msg)
             if response:  # send_message returns a dictionary of failed recipients
                 print(f"Failed to send email: {response}")

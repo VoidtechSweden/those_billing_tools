@@ -1,6 +1,4 @@
 import os
-import re
-from config.config import Configuration
 from config.pattern_modules.pattern_module import PatternModule, register_pattern_module
 
 

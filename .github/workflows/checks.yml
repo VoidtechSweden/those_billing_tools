@@ -1,0 +1,23 @@
+name: Pull request check
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  checks:
+    runs-on: pipenv
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pipenv
+        run: pip install pipenv
+      - name: Install dependencies
+        run: pipenv sync
+      - name: Run check_black.sh
+        run: scripts/check_black.sh
+      - name: Run check_flake8.sh
+        run: scripts/check_flake8.sh
+
+        #TODO unit tests

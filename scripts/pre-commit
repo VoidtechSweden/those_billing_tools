@@ -1,0 +1,27 @@
+#!/bin/sh
+
+echo "Running pre-commit checks..."
+
+echo
+echo "1. Installing dependencies ..."
+python -m pipenv sync 
+
+echo
+echo "2. Checking formatting with black..."
+./scripts/check_black.sh
+if [ $? -ne 0 ]; then
+    echo
+    echo -e "\033[1;31mBlack formatting check failed. Please format your code.\033[0m"
+    exit 1
+fi
+
+echo
+echo "3. Checking static code analysis with flake8..."
+./scripts/check_flake8.sh
+if [ $? -ne 0 ]; then
+    echo
+    echo -e "\033[1;31mFlake8 linting failed. Please fix the issues.\033[0m"
+    exit 1
+fi
+
+#TODO unit tests

@@ -25,7 +25,7 @@ def main():
 
     # Get invoice number
     invoice_number = input_tools.input_number(
-        f"Choose invoice number", billing_tools.get_latest_invoice_nr()
+        "Choose invoice number", billing_tools.get_latest_invoice_nr()
     )
 
     # Check that the invoice files exists

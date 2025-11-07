@@ -1,6 +1,5 @@
 import os
 import re
-import re
 import subprocess
 
 from utils import basic_tools

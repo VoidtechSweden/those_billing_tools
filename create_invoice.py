@@ -12,16 +12,16 @@ if __name__ == "__main__":
 
     print(f"Creating invoice for {Configuration.get('billing', 'company')}")
 
-    ### Get invoice date ###
+    # Get invoice date ###
     date = input_tools.input_date("Enter date (YYYY-MM-DD)", DateTime.now())
     print("Billing period: " + billing_tools.month_to_shortstring(date.month))
 
-    ### Get billed hours ###
+    # Get billed hours ###
     hours = input_tools.input_number("Enter number of worked hours")
 
-    ### Get new invoice number ###
+    # Get new invoice number ###
     invoice_number = input_tools.input_number(
-        f"Enter invoice number", billing_tools.get_latest_invoice_nr() + 1
+        "Enter invoice number", billing_tools.get_latest_invoice_nr() + 1
     )
     if billing_tools.invoice_already_exists(invoice_number):
         basic_tools.paused_exit(
@@ -29,11 +29,11 @@ if __name__ == "__main__":
             "Exiting to avoid overwriting an existing file.",
         )
 
-    ### Generate invoice name ###
+    # Generate invoice name ###
     invoice_path = billing_tools.create_invoice_path(invoice_number)
     print(f"File will be saved as: '{invoice_path}'")
 
-    ### Get the correct template to use ###
+    # Get the correct template to use ###
     template_prefix = Configuration.get("billing", "template_prefix")
     template_path = Configuration.get("billing", "template_path")
     template_files = [
@@ -55,7 +55,7 @@ if __name__ == "__main__":
         )
     print(f"Using billing template: '{template_file}'")
 
-    ### Create and save the spreadsheet bill ###
+    # Create and save the spreadsheet bill ###
     wb = load_workbook(template_file)
     ws = wb.active
     ws[billing_tools.BillFields.NUMBER_FIELD] = invoice_number
