@@ -3,9 +3,10 @@ import re
 from config.config import Configuration
 from config.pattern_modules.pattern_module import PatternModule, register_pattern_module
 
+
 @register_pattern_module
 class CurrentDirPattern(PatternModule):
-    
+
     def match(self):
         assert False, "CurrentDirPattern does not support matching"
 

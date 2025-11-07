@@ -1,13 +1,14 @@
-
 from abc import abstractmethod
 from abc import ABC
 import glob
 import importlib
 import os
 
+
 def register_pattern_module(cls):
     PatternModuleRegistry.register(cls)
     return cls
+
 
 class PatternModuleRegistry:
     _registry = []
@@ -21,7 +22,9 @@ class PatternModuleRegistry:
         current_dir = os.path.dirname(os.path.relpath(__file__))
         pattern_files = glob.glob(os.path.join(current_dir, "*_pattern.py"))
         for pattern_file in pattern_files:
-            module_name = pattern_file.replace("/", ".").replace("\\", ".").replace(".py", "")
+            module_name = (
+                pattern_file.replace("/", ".").replace("\\", ".").replace(".py", "")
+            )
             importlib.import_module(module_name)
 
     @classmethod
@@ -30,8 +33,9 @@ class PatternModuleRegistry:
             cls._load_modules()
         return cls._registry
 
+
 class PatternModule(ABC):
-    
+
     @abstractmethod
     def match(self):
         """The pattern to match"""

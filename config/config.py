@@ -2,6 +2,7 @@ import configparser
 import os
 from config.config_pattern import ConfigPattern
 
+
 class Configuration:
 
     _CONFIG = None
@@ -14,7 +15,7 @@ class Configuration:
         if not os.path.exists(config_file):
             assert False, f"Configuration file '{config_file}' not found."
 
-        #load template config and check that all required fields are present
+        # load template config and check that all required fields are present
         template_file = "template.config"
         if not os.path.exists(template_file):
             assert False, f"Template configuration file '{template_file}' not found."
@@ -31,19 +32,19 @@ class Configuration:
                 if not Configuration._CONFIG.has_option(section, option):
                     assert False, f"Missing configuration for [{section}] {option}"
 
-        #Handle config values with substitute patterns
+        # Handle config values with substitute patterns
         for section in Configuration._CONFIG.sections():
             for option in Configuration._CONFIG.options(section):
                 value = Configuration._CONFIG.get(section, option)
-                if (section == "billing" and option == "invoice_pattern"):
+                if section == "billing" and option == "invoice_pattern":
                     # Save invoice pattern separately
                     Configuration._INVOICE_PATTERN.create(value)
                 elif "{" in value and "}" in value:
                     replacement_pattern = ConfigPattern()
                     replacement_pattern.create(value)
-                    Configuration._CONFIG.set(section, option, replacement_pattern.to_string())
-
-
+                    Configuration._CONFIG.set(
+                        section, option, replacement_pattern.to_string()
+                    )
 
     @staticmethod
     def get(section, option):

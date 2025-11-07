@@ -2,6 +2,7 @@ from datetime import date
 from config.pattern_modules.pattern_module import PatternModule
 import re
 
+
 class StaticStringPattern(PatternModule):
 
     def __init__(self, static_string):

@@ -34,8 +34,8 @@ if __name__ == "__main__":
     print(f"File will be saved as: '{invoice_path}'")
 
     ### Get the correct template to use ###
-    template_prefix = Configuration.get('billing', 'template_prefix')
-    template_path = Configuration.get('billing', 'template_path')
+    template_prefix = Configuration.get("billing", "template_prefix")
+    template_path = Configuration.get("billing", "template_path")
     template_files = [
         os.path.join(template_path, f)
         for f in os.listdir(template_path)

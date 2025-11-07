@@ -9,9 +9,9 @@ from utils import basic_tools, input_tools
 
 
 class server_settings:
-    SMTP_SERVER = Configuration.get('mail', 'smtp_server')
-    SMTP_PORT = Configuration.get('mail', 'smtp_port')
-    SMTP_USER = Configuration.get('mail', 'smtp_user')
+    SMTP_SERVER = Configuration.get("mail", "smtp_server")
+    SMTP_PORT = Configuration.get("mail", "smtp_port")
+    SMTP_USER = Configuration.get("mail", "smtp_user")
     SMTP_PASSWORD = ""
 
 
@@ -76,16 +76,16 @@ def send_email(email_info, attachment_path):
     try:
 
         if not server_settings.SMTP_PASSWORD:
-            server_settings.SMTP_PASSWORD = input_tools.input_password(f"Enter password to SMTP server")
+            server_settings.SMTP_PASSWORD = input_tools.input_password(
+                f"Enter password to SMTP server"
+            )
 
         with smtplib.SMTP(
             server_settings.SMTP_SERVER, server_settings.SMTP_PORT
         ) as smtp_connection:
             smtp_connection.ehlo()
             smtp_connection.starttls()
-            smtp_connection.login(
-                server_settings.SMTP_USER, password
-            )
+            smtp_connection.login(server_settings.SMTP_USER, password)
             response = smtp_connection.send_message(msg)
             if response:  # send_message returns a dictionary of failed recipients
                 print(f"Failed to send email: {response}")

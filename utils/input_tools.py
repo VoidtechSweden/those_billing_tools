@@ -2,6 +2,7 @@ import datetime
 
 from utils import basic_tools
 
+
 def input_password(prompt):
     """
     Prompt the user for a password (input hidden)
@@ -14,6 +15,7 @@ def input_password(prompt):
             return password
         else:
             print("Password can not be empty.")
+
 
 def input_number(prompt, default=None):
     """

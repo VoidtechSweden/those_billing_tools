@@ -1,13 +1,14 @@
 import re
 from config.pattern_modules.pattern_module import PatternModuleRegistry
 
+
 class ConfigPattern:
 
     def __init__(self):
         self.__modules = []
 
     def create(self, string):
-        """ Given a pattern string, extract and return a list of PatternModule instances representing the pattern. """
+        """Given a pattern string, extract and return a list of PatternModule instances representing the pattern."""
 
         def create_pattern_module(string):
             if string.startswith("{") and string.endswith("}"):
@@ -17,7 +18,10 @@ class ConfigPattern:
                         return pattern_class()
                 assert False, f"Unknown pattern '{pattern_name}'"
             else:
-                from config.pattern_modules.staticstring_pattern import StaticStringPattern
+                from config.pattern_modules.staticstring_pattern import (
+                    StaticStringPattern,
+                )
+
                 return StaticStringPattern(string)
 
         current = ""
@@ -49,13 +53,13 @@ class ConfigPattern:
         for module in self.__modules:
             regexp += module.match()
         return regexp
-    
+
     def to_string(self):
         pattern_string = ""
         for module in self.__modules:
             pattern_string += module.to_string()
         return pattern_string
-    
+
     def to_string_with_number(self, number):
         self.set_number(number)
         string = self.to_string()
@@ -67,7 +71,7 @@ class ConfigPattern:
                 module.set_number(number)
 
     def find_pattern(self, targetmodule, text):
-        """ Find and return the value of the first occurrence of the pattern module in the given text. """
+        """Find and return the value of the first occurrence of the pattern module in the given text."""
 
         start_regexp = ""
         module_regexp = ""
@@ -76,12 +80,12 @@ class ConfigPattern:
                 module_regexp = module.match()
                 break
             start_regexp += module.match()
-        
+
         # Find the value that starts after the start_regexp and matches the module_regexp
         pattern_regexp = f"(?<={start_regexp})"
         prefix = re.search(pattern_regexp, text).group(0)
 
-        #remove the found prefix from the text
-        text = text[len(prefix):]
+        # remove the found prefix from the text
+        text = text[len(prefix) :]
 
         return re.search(module_regexp, text).group(0)

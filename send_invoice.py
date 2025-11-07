@@ -7,14 +7,14 @@ from billing import billing_tools
 from mail import mail_tools
 
 BILL_EMAIL_INFO = mail_tools.EmailInfo(
-    recipient=Configuration.get('mail', 'invoice_recipient'),
+    recipient=Configuration.get("mail", "invoice_recipient"),
     subject_text=f"{Configuration.get('billing', 'company')} faktura",
     body_text=f"Hej!\n\nBifogar månadens faktura för {Configuration.get('billing', 'company')}.\n\nMvh {Configuration.get('billing', 'name')}",
-    cc_recipient=Configuration.get('mail', 'invoice_cc'),
+    cc_recipient=Configuration.get("mail", "invoice_cc"),
 )
 
 PDF_EMAIL_INFO = mail_tools.EmailInfo(
-    recipient=Configuration.get('mail', 'pdf_recipient'),
+    recipient=Configuration.get("mail", "pdf_recipient"),
     subject_text=f"{Configuration.get('billing', 'company')}, utgående faktura",
     body_text="",
 )

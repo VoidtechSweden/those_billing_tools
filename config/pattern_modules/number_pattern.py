@@ -1,5 +1,6 @@
 from config.pattern_modules.pattern_module import PatternModule, register_pattern_module
 
+
 @register_pattern_module
 class NumberPattern(PatternModule):
 
@@ -7,7 +8,7 @@ class NumberPattern(PatternModule):
         self.__invoice_number = None
 
     def match(self):
-        return r'\b\d+\b' # One or more numbers
+        return r"\b\d+\b"  # One or more numbers
 
     @classmethod
     def name(cls):
@@ -18,6 +19,6 @@ class NumberPattern(PatternModule):
 
     def is_mandatory(self):
         return True
-    
+
     def set_number(self, invoice_number):
         self.__invoice_number = invoice_number
