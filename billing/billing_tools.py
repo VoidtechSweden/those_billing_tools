@@ -2,11 +2,9 @@ import os
 import re
 import subprocess
 
-from utils import basic_tools, input_tools
+from utils import exit_tools, input_tools
 
 from config.config import Configuration
-
-SOFFICE_PATH = "C:\\Program Files\\LibreOffice\\program\\soffice.exe"
 
 BILL_FILE_TYPE = ".xlsx"
 
@@ -142,12 +140,17 @@ def convert_to_pdf(invoice_path):
         return None
 
     pdf_path = None
-    if os.path.exists(SOFFICE_PATH):
+    pdf_converter = Configuration.get("billing", "pdf_converter")
+    # TODO support other PDF converters than libreoffice on windows
+    if "soffice" not in pdf_converter:
+        print("Cannot create PDF. Specified PDF converter is not LibreOffice")
+
+    if os.path.exists(pdf_converter):
         proposed_pdf_path = invoice_path.replace(BILL_FILE_TYPE, ".pdf")
         print("LibreOffice is installed. Creating PDF version of the invoice...")
         result = subprocess.run(
             [
-                SOFFICE_PATH,
+                pdf_converter,
                 "--headless",
                 "--convert-to",
                 'pdf:calc_pdf_Export:{"PageRange":{"type":"string","value":"1"},"ExportNotes":{"type":"boolean","value":false}}',
@@ -200,7 +203,7 @@ def get_invoice_template_file():
         and f.endswith(".xlsx")
     ]
     if not template_files:
-        basic_tools.paused_exit(
+        exit_tools.paused_exit(
             f"No template file with prefix '{template_prefix}' found in '{template_path}'"
         )
     elif len(template_files) == 1:
@@ -213,4 +216,4 @@ def get_invoice_template_file():
 
 
 if __name__ == "__main__":
-    basic_tools.paused_exit("This is a support module and should not be run directly")
+    exit_tools.paused_exit("This is a support module and should not be run directly")

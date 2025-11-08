@@ -1,6 +1,6 @@
 import datetime
 
-from utils import basic_tools
+from utils import exit_tools
 
 
 def input_password(prompt):
@@ -75,4 +75,4 @@ def select_indexed_item(prompt, items):
 
 
 if __name__ == "__main__":
-    basic_tools.paused_exit("This is a support module and should not be run directly")
+    exit_tools.paused_exit("This is a support module and should not be run directly")

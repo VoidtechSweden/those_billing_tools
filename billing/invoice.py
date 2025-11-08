@@ -1,8 +1,10 @@
-import os
-from openpyxl import load_workbook
-
 from billing import billing_tools
 from config.config import Configuration
+from utils import import_tools
+
+import os
+
+openpyxl = import_tools.try_import("openpyxl")
 
 
 class Invoice:
@@ -43,7 +45,7 @@ class Invoice:
         assert self._invoice_number != 0, "Invoice number not set"
         assert self._invoice_path is not None, "Invoice path not set"
 
-        wb = load_workbook(self._template_file)
+        wb = openpyxl.load_workbook(self._template_file)
         ws = wb.active
 
         # Write all fields

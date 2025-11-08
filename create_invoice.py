@@ -3,15 +3,17 @@ from billing.fields.invoice_number_field import InvoiceNumberField
 from billing.fields.month_period_field import MonthPeriodField
 from billing.fields.normal_hours_field import NormalHoursField
 from billing.invoice import Invoice
-from utils import basic_tools
+from utils import exit_tools
 
 from billing import billing_tools
 
 from config.config import Configuration
 
-if __name__ == "__main__":
+import sys
 
-    print(f"Creating invoice for {Configuration.get('billing', 'company')}")
+
+def main():
+    print(f"Creating invoice for {Configuration.get('identification', 'company')}")
 
     invoice = Invoice()
 
@@ -32,7 +34,7 @@ if __name__ == "__main__":
     invoice.add_field(invoice_number_field)
 
     if billing_tools.invoice_already_exists(invoice_number):
-        basic_tools.paused_exit(
+        exit_tools.paused_exit(
             f"Invoice with number {invoice_number} already exists",
             "Exiting to avoid overwriting an existing file.",
         )
@@ -46,4 +48,9 @@ if __name__ == "__main__":
     invoice.write_invoice()
     invoice.print_summary()
 
-    basic_tools.paused_exit("Invoice created")
+    exit_tools.paused_exit("Invoice created")
+
+
+if __name__ == "__main__":
+    sys.excepthook = exit_tools.ows_abort_handler
+    main()

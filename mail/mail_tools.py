@@ -4,7 +4,7 @@ from email.message import EmailMessage
 import mimetypes
 
 from config.config import Configuration
-from utils import basic_tools, input_tools
+from utils import exit_tools, input_tools
 
 
 class server_settings:
@@ -120,4 +120,4 @@ def send_email(email_info, attachment_path):
 
 
 if __name__ == "__main__":
-    basic_tools.paused_exit("This is a support module and should not be run directly")
+    exit_tools.paused_exit("This is a support module and should not be run directly")
