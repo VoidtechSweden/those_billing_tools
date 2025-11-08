@@ -1,4 +1,5 @@
 from billing import billing_tools
+from billing.pdf_converter import InvoicePdfConverter
 from config.config import Configuration
 from utils import import_tools
 
@@ -6,15 +7,20 @@ import os
 
 openpyxl = import_tools.try_import("openpyxl")
 
+BILL_FILE_TYPE = ".xlsx"
+
 
 class Invoice:
-    """Invoice to change invoice fields and write to file"""
+    """
+    Invoice to change invoice fields in a template file and write to a new file
+    """
 
     def __init__(self):
         self._invoice_fields = []
         self._template_file = None
         self._invoice_number = 0
         self._invoice_path = None
+        self._pdf_path = None
 
     def add_field(self, field):
         """
@@ -55,7 +61,7 @@ class Invoice:
         wb.save(self._invoice_path)
 
         if Configuration.getboolean("billing", "create_pdf"):
-            self._pdf_path = billing_tools.convert_to_pdf(self._invoice_path)
+            self._pdf_path = InvoicePdfConverter.convert_invoice(self._invoice_path)
 
     def print_summary(self):
         print("\nInvoice summary")

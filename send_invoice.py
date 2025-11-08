@@ -5,20 +5,7 @@ from config.config import Configuration
 from utils import exit_tools, input_tools
 
 from billing import billing_tools
-from mail import mail_tools
-
-BILL_EMAIL_INFO = mail_tools.EmailInfo(
-    recipient=Configuration.get("mail", "invoice_recipient"),
-    subject_text=f"{Configuration.get('identification', 'company')} faktura",
-    body_text=f"Hej!\n\nBifogar månadens faktura för {Configuration.get('identification', 'company')}.\n\nMvh {Configuration.get('identification', 'name')}",
-    cc_recipient=Configuration.get("mail", "invoice_cc"),
-)
-
-PDF_EMAIL_INFO = mail_tools.EmailInfo(
-    recipient=Configuration.get("mail", "pdf_recipient"),
-    subject_text=f"{Configuration.get('identification', 'company')}, utgående faktura",
-    body_text="",
-)
+from mail import email
 
 
 def main():
@@ -38,11 +25,27 @@ def main():
         if not os.path.exists(pdf_path):
             exit_tools.paused_exit(f"Could not find PDF file '{pdf_path}'")
 
-    # Send the invoice emails
-    if not mail_tools.send_email(BILL_EMAIL_INFO, attachment_path=invoice_path):
+    # Send the invoice email
+    invoice_email = email.Email(
+        recipient=Configuration.get("mail", "invoice_recipient"),
+        subject_text=f"{Configuration.get('identification', 'company')} faktura",
+        body_text=f"Hej!\n\nBifogar månadens faktura för {Configuration.get('identification', 'company')}.\n\nMvh {Configuration.get('identification', 'name')}",
+        cc_recipient=Configuration.get("mail", "invoice_cc"),
+        attachment_path=invoice_path,
+    )
+    if not invoice_email.send():
         exit_tools.paused_exit("Could not send Excel invoice email")
+
+    # Optionally send the PDF as well
     if Configuration.getboolean("mail", "send_pdf"):
-        if not mail_tools.send_email(PDF_EMAIL_INFO, attachment_path=pdf_path):
+        pdf_email = email.Email(
+            recipient=Configuration.get("mail", "pdf_recipient"),
+            subject_text=f"{Configuration.get('identification', 'company')}, utgående faktura",
+            body_text="",
+            cc_recipient=None,
+            attachment_path=pdf_path,
+        )
+        if not pdf_email.send():
             exit_tools.paused_exit("Could not send PDF invoice email")
 
     exit_tools.paused_exit("Invoices sent!")

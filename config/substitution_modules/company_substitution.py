@@ -9,11 +9,11 @@ from config.substitution_modules.substitution_module import (
 class CompanySubstitution(SubstitutionModule):
 
     def match(self):
-        return Configuration.get("billing", "company")
+        return Configuration.get("identification", "company")
 
     @classmethod
     def name(cls):
         return "company"
 
     def to_string(self):
-        return Configuration.get("billing", "company")
+        return Configuration.get("identification", "company")

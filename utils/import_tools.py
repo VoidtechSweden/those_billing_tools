@@ -16,3 +16,7 @@ def try_import(module_name, package_name=None):
             f"Error: Could not import module '{module_name}'. Try installing using pip install {package_name}"
         )
         paused_exit("Unresolvable dependency encountered")
+
+
+if __name__ == "__main__":
+    paused_exit("This is a support module and should not be run directly")
