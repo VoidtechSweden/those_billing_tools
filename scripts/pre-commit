@@ -24,4 +24,13 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+echo
+echo "4. Running unit tests..."
+./scripts/check_tests.sh
+if [ $? -ne 0 ]; then
+    echo
+    echo -e "\033[1;31mUnit tests failed. Please fix the issues.\033[0m"
+    exit 1
+fi
+
 #TODO unit tests

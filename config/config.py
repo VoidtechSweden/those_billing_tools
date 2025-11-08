@@ -7,13 +7,23 @@ class Configuration:
 
     _CONFIG = None
     _INVOICE_PATTERN = ConfigPattern()
+    CONFIG_FILE = "my.config"
+
+    def reset():
+        """Reset the loaded configuration"""
+        Configuration._CONFIG = None
+
+    def force_config_file(config_file):
+        """Force the use of a specific configuration file"""
+        Configuration.CONFIG_FILE = config_file
+        Configuration.reset()
 
     @staticmethod
     def __load():
-        config_file = "my.config"
+        """Load the configuration from file and validate required fields"""
 
-        if not os.path.exists(config_file):
-            assert False, f"Configuration file '{config_file}' not found."
+        if not os.path.exists(Configuration.CONFIG_FILE):
+            assert False, f"Configuration file '{Configuration.CONFIG_FILE}' not found."
 
         # load template config and check that all required fields are present
         template_file = "template.config"
@@ -24,7 +34,7 @@ class Configuration:
         template = configparser.ConfigParser()
         template.read(template_file)
         Configuration._CONFIG = configparser.ConfigParser()
-        Configuration._CONFIG.read(config_file)
+        Configuration._CONFIG.read(Configuration.CONFIG_FILE)
 
         # Check that my config contains all fields from the template
         for section in template.sections():
@@ -71,16 +81,22 @@ class Configuration:
 
     @staticmethod
     def get(section, option):
+        """
+        Get a configuration value as a string
+        """
         return Configuration.__internal_get(section, option, str)
 
     @staticmethod
     def getboolean(section, option):
+        """Get a configuration value as a boolean"""
         return Configuration.__internal_get(section, option, bool)
 
     @staticmethod
     def getint(section, option):
+        """Get a configuration value as an integer"""
         return Configuration.__internal_get(section, option, int)
 
     @staticmethod
     def get_invoice_pattern():
+        """Get the invoice name pattern as a ConfigPattern object"""
         return Configuration._INVOICE_PATTERN

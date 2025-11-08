@@ -15,9 +15,9 @@ jobs:
         run: pip install pipenv
       - name: Install dependencies
         run: pipenv sync
-      - name: Run check_black.sh
+      - name: Check black
         run: scripts/check_black.sh
-      - name: Run check_flake8.sh
+      - name: Check flake8
         run: scripts/check_flake8.sh
-
-        #TODO unit tests
+      - name: Check unit tests
+        run: scripts/check_tests.sh
