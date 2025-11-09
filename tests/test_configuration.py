@@ -1,10 +1,12 @@
 import configparser
 import os
+import re
 
 import pytest
 from config.config import Configuration
 import tempfile
 import contextlib
+from datetime import date
 
 CONFIG_TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), "../template.config")
 
@@ -80,4 +82,52 @@ def test_name_company_substitution():
         assert Configuration.instance().identification.company == company
         assert Configuration.instance().identification.email == expected_mail
 
-    # TODO test more configuration aspects, for example invoice pattern parsing
+
+def test_currentdir_substitution():
+    """
+    TEST: Loading a configuration file with the {currentdir} substitution pattern
+
+    EXPECTED: The substitutions are correctly applied
+    """
+
+    config_fields = [
+        ("billing", "invoices_path", "{currentdir}/../testfolder/"),
+    ]
+
+    with temporary_config(updated_fields=config_fields):
+        assert Configuration.instance().billing.invoice_path.startswith(os.getcwd())
+        assert Configuration.instance().billing.invoice_path.endswith("../testfolder/")
+
+
+def test_invoice_pattern_substitution():
+    """
+    TEST: Loading a configuration file with the invoice pattern substitution
+
+    EXPECTED: The invoice pattern is correctly parsed
+    """
+
+    company = "testcompany"
+    expected_date = date.today().strftime("%Y-%m-%d")
+    expected_invoice_name = f"{company}-{expected_date} FAKTURA 123"
+
+    config_pattern = "{company}-{date} FAKTURA {number}"
+    config_fields = [
+        ("billing", "invoice_pattern", config_pattern),
+        ("identification", "company", company),
+    ]
+
+    with temporary_config(updated_fields=config_fields):
+        invoice_pattern = Configuration.instance().billing.invoice_pattern
+
+        # Verify that the pattern works correctly
+        assert invoice_pattern.to_string_with_number(123) == expected_invoice_name
+        assert invoice_pattern.to_string_with_number(
+            99
+        ) == expected_invoice_name.replace("123", "99")
+
+        # Verify that the regexp works correctly and can be matched to the expected invoice name
+        regexp = invoice_pattern.get_regexp()
+
+        match = re.match(regexp, expected_invoice_name)
+        assert match is not None
+        assert match.group(0) == expected_invoice_name
