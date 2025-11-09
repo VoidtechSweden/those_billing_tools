@@ -60,7 +60,7 @@ class Invoice:
 
         wb.save(self._invoice_path)
 
-        if Configuration.getboolean("billing", "create_pdf"):
+        if Configuration.instance().billing.create_pdf:
             self._pdf_path = InvoicePdfConverter.convert_invoice(self._invoice_path)
 
     def print_summary(self):

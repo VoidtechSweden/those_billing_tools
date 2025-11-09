@@ -24,14 +24,15 @@ def temporary_config(updated_fields=[], invalid=False):
     if invalid:
         config.remove_option("identification", "company")
 
+    tmpfile = None
     with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=".config") as tmp:
+        tmpfile = tmp.name
         config.write(tmp)
         tmp.flush()
         tmp.seek(0)
-        Configuration.force_config_file(tmp.name)
+        Configuration.instance().reload_config_file(tmp.name)
         yield
-    Configuration.reset()
-    os.remove(tmp.name)
+    os.remove(tmpfile)
 
 
 def test_template_configuration():
@@ -42,7 +43,7 @@ def test_template_configuration():
     """
 
     with temporary_config():
-        assert Configuration.get("identification", "company") == "My Company"
+        assert Configuration.instance().identification.company == "My Company"
 
 
 def test_invalid_configuration():
@@ -52,9 +53,9 @@ def test_invalid_configuration():
     EXPECTED: AssertionError is raised
     """
 
-    with temporary_config(invalid=True):
-        with pytest.raises(AssertionError):
-            Configuration.get("identification", "name")
+    with pytest.raises(AssertionError):
+        with temporary_config(invalid=True):
+            pass
 
 
 def test_name_company_substitution():
@@ -75,8 +76,8 @@ def test_name_company_substitution():
     ]
 
     with temporary_config(updated_fields=config_fields):
-        assert Configuration.get("identification", "name") == name
-        assert Configuration.get("identification", "company") == company
-        assert Configuration.get("identification", "email") == expected_mail
+        assert Configuration.instance().identification.name == name
+        assert Configuration.instance().identification.company == company
+        assert Configuration.instance().identification.email == expected_mail
 
     # TODO test more configuration aspects, for example invoice pattern parsing

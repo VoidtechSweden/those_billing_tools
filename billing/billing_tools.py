@@ -13,10 +13,10 @@ def __find_all_invoices():
     # find all .xlsx files in all subdirectories that match the invoice pattern
 
     invoice_files = []
-    invoice_regexp = Configuration.get_invoice_pattern().get_regexp()
+    invoice_regexp = Configuration.instance().billing.invoice_pattern.get_regexp()
 
     # check if invoice directory exists
-    invoices_path = Configuration.get("billing", "invoices_path")
+    invoices_path = Configuration.instance().billing.invoice_path
     if not os.path.exists(invoices_path):
         assert False, f"Invoice directory does not exist: {invoices_path}"
 
@@ -46,7 +46,7 @@ def get_all_existing_invoice_numbers():
     for invoice_file in invoice_files:
         try:
             bill_number = int(
-                Configuration.get_invoice_pattern().find_substitution_value(
+                Configuration.instance().billing.invoice_pattern.find_substitution_value(
                     "number", os.path.basename(invoice_file)
                 )
             )
@@ -87,7 +87,7 @@ def create_invoice_name(invoice_number):
     """
     Create a invoice name from the invoice number
     """
-    invoice_pattern = Configuration.get_invoice_pattern()
+    invoice_pattern = Configuration.instance().billing.invoice_pattern
     return invoice_pattern.to_string_with_number(invoice_number) + BILL_FILE_TYPE
 
 
@@ -105,7 +105,7 @@ def create_invoice_path(invoice_number):
         (
             os.path.dirname(last_invoice_file)
             if last_invoice_file
-            else Configuration.get("billing", "invoices_path")
+            else Configuration.instance().billing.invoice_path
         ),
         invoice_name,
     )
@@ -115,8 +115,8 @@ def get_invoice_template_file():
     """
     Get the billing template file to use
     """
-    template_prefix = Configuration.get("billing", "template_prefix")
-    template_path = Configuration.get("billing", "template_path")
+    template_prefix = Configuration.instance().billing.template_prefix
+    template_path = Configuration.instance().billing.template_path
     template_files = [
         os.path.join(template_path, f)
         for f in os.listdir(template_path)

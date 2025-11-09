@@ -13,7 +13,7 @@ import sys
 
 
 def main():
-    print(f"Creating invoice for {Configuration.get('identification', 'company')}")
+    print(f"Creating invoice for {Configuration.instance().identification.company}")
 
     invoice = Invoice()
 

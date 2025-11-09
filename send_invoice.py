@@ -20,27 +20,27 @@ def main():
     invoice_path = billing_tools.get_invoice_path_from_nr(invoice_number)
     if not invoice_path:
         exit_tools.paused_exit(f"Could not find invoice {invoice_number}")
-    if Configuration.getboolean("mail", "send_pdf"):
+    if Configuration.instance().mailing.send_pdf:
         pdf_path = invoice_path.replace(".xlsx", ".pdf")
         if not os.path.exists(pdf_path):
             exit_tools.paused_exit(f"Could not find PDF file '{pdf_path}'")
 
     # Send the invoice email
     invoice_email = email.Email(
-        recipient=Configuration.get("mail", "invoice_recipient"),
-        subject_text=f"{Configuration.get('identification', 'company')} faktura",
-        body_text=f"Hej!\n\nBifogar månadens faktura för {Configuration.get('identification', 'company')}.\n\nMvh {Configuration.get('identification', 'name')}",
-        cc_recipient=Configuration.get("mail", "invoice_cc"),
+        recipient=Configuration.instance().mailing.invoice_recipient,
+        subject_text=f"{Configuration.instance().identification.company} faktura",
+        body_text=f"Hej!\n\nBifogar månadens faktura för {Configuration.instance().identification.company}.\n\nMvh {Configuration.instance().identification.name}",
+        cc_recipient=Configuration.instance().mailing.invoice_cc,
         attachment_path=invoice_path,
     )
     if not invoice_email.send():
         exit_tools.paused_exit("Could not send Excel invoice email")
 
     # Optionally send the PDF as well
-    if Configuration.getboolean("mail", "send_pdf"):
+    if Configuration.instance().mailing.send_pdf:
         pdf_email = email.Email(
-            recipient=Configuration.get("mail", "pdf_recipient"),
-            subject_text=f"{Configuration.get('identification', 'company')}, utgående faktura",
+            recipient=Configuration.instance().mailing.pdf_recipient,
+            subject_text=f"{Configuration.instance().identification.company}, utgående faktura",
             body_text="",
             cc_recipient=None,
             attachment_path=pdf_path,

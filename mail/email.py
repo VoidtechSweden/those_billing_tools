@@ -7,9 +7,9 @@ from utils import input_tools
 
 
 class server_settings:
-    SMTP_SERVER = Configuration.get("mail", "smtp_server")
-    SMTP_PORT = Configuration.getint("mail", "smtp_port")
-    SMTP_USER = Configuration.get("mail", "smtp_user")
+    SMTP_SERVER = Configuration.instance().mailing.smtp.server
+    SMTP_PORT = Configuration.instance().mailing.smtp.port
+    SMTP_USER = Configuration.instance().mailing.smtp.username
     SMTP_PASSWORD = ""
 
 
@@ -46,10 +46,10 @@ class Email:
         print("================================")
         if self.attachment_path is not None:
             print(f"FILE: {self.attachment_path}")
-        print(f"FROM: <{Configuration.get("identification", "email")}>")
-        if Configuration.getboolean("DEBUG", "mail_to_self_only"):
+        print(f"FROM: <{Configuration.instance().identification.email}>")
+        if Configuration.instance().debug.mail_to_self_only:
             print(
-                f"TO:   <{Configuration.get("identification", "email")}> (DEBUG MODE)"
+                f"TO:   <{Configuration.instance().identification.email}> (DEBUG MODE)"
             )
         else:
             print(f"TO:   <{self.recipient}>")
@@ -63,19 +63,19 @@ class Email:
         # Create the container email message.
         msg = EmailMessage()
         msg["Subject"] = self.subject_text
-        msg["From"] = Configuration.get("identification", "email")
-        if Configuration.getboolean("DEBUG", "mail_to_self_only"):
+        msg["From"] = Configuration.instance().identification.email
+        if Configuration.instance().debug.mail_to_self_only:
             print(
                 "DEBUG: Overriding recipient to send mail to self only (mail_to_self_only=True)"
             )
-            msg["To"] = Configuration.get("identification", "email")
+            msg["To"] = Configuration.instance().identification.email
         else:
             msg["To"] = self.recipient
             if self.cc_recipient:
                 msg["Cc"] = self.cc_recipient
 
         msg.set_content(self.body_text)
-        msg["Bcc"] = Configuration.get("identification", "email")  # Bcc to self
+        msg["Bcc"] = Configuration.instance().identification.email  # Bcc to self
 
         if self.attachment_path is not None:
             # Deduct mime type of the file

@@ -9,11 +9,11 @@ from config.substitution_modules.substitution_module import (
 class NameSubstitution(SubstitutionModule):
 
     def match(self):
-        return Configuration.get("identification", "name")
+        return Configuration.instance().identification.name
 
     @classmethod
     def name(cls):
         return "name"
 
     def to_string(self):
-        return Configuration.get("identification", "name")
+        return Configuration.instance().identification.name

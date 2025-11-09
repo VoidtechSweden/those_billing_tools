@@ -25,7 +25,7 @@ class InvoicePdfConverter:
             )
             return None
 
-        pdf_converter = Configuration.get("billing", "pdf_converter")
+        pdf_converter = Configuration.instance().billing.pdf_converter
         if not pdf_converter.endswith(
             InvoicePdfConverter.__get_expected_executable_name()
         ):
