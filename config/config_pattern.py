@@ -94,8 +94,7 @@ class ConfigPattern:
             start_regexp += module.match()
 
         # Find the value that starts after the start_regexp and matches the module_regexp
-        pattern_regexp = f"(?<={start_regexp})"
-        prefix = re.search(pattern_regexp, text).group(0)
+        prefix = re.search(start_regexp, text).group(0)
 
         # remove the found prefix from the text
         text = text[len(prefix) :]

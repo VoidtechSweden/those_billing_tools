@@ -106,9 +106,10 @@ def test_invoice_pattern_substitution():
     EXPECTED: The invoice pattern is correctly parsed
     """
 
+    invoice_number = 123
     company = "testcompany"
     expected_date = date.today().strftime("%Y-%m-%d")
-    expected_invoice_name = f"{company}-{expected_date} FAKTURA 123"
+    expected_invoice_name = f"{company}-{expected_date} FAKTURA {invoice_number}"
 
     config_pattern = "{company}-{date} FAKTURA {number}"
     config_fields = [
@@ -118,16 +119,25 @@ def test_invoice_pattern_substitution():
 
     with temporary_config(updated_fields=config_fields):
         invoice_pattern = Configuration.instance().billing.invoice_pattern
+        invoice_pattern.set_number(invoice_number)
 
-        # Verify that the pattern works correctly
-        assert invoice_pattern.to_string_with_number(123) == expected_invoice_name
+        # Check that the pattern contains the number substitution
+        assert invoice_pattern.contains_number()
+
+        # Verify that the pattern works correctly and gives the expected invoice name
+        assert invoice_pattern.to_string() == expected_invoice_name
         assert invoice_pattern.to_string_with_number(
             99
-        ) == expected_invoice_name.replace("123", "99")
+        ) == expected_invoice_name.replace(str(invoice_number), "99")
 
         # Verify that the regexp works correctly and can be matched to the expected invoice name
         regexp = invoice_pattern.get_regexp()
-
         match = re.match(regexp, expected_invoice_name)
         assert match is not None
         assert match.group(0) == expected_invoice_name
+
+        # Use the pattern to find the number value from the expected invoice name
+        found_number = invoice_pattern.find_substitution_value(
+            "number", expected_invoice_name
+        )
+        assert found_number == str(invoice_number)
