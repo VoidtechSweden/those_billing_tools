@@ -15,8 +15,8 @@ class Configuration:
 
     def force_config_file(config_file):
         """Force the use of a specific configuration file"""
-        Configuration.CONFIG_FILE = config_file
         Configuration.reset()
+        Configuration.CONFIG_FILE = config_file
 
     @staticmethod
     def __load():
@@ -25,10 +25,11 @@ class Configuration:
         if not os.path.exists(Configuration.CONFIG_FILE):
             assert False, f"Configuration file '{Configuration.CONFIG_FILE}' not found."
 
-        # load template config and check that all required fields are present
         template_file = "template.config"
         if not os.path.exists(template_file):
             assert False, f"Template configuration file '{template_file}' not found."
+
+        print(f"Loading configuration from '{Configuration.CONFIG_FILE}'")
 
         # Load configs
         template = configparser.ConfigParser()
@@ -40,7 +41,9 @@ class Configuration:
         for section in template.sections():
             for option in template.options(section):
                 if not Configuration._CONFIG.has_option(section, option):
-                    assert False, f"Missing configuration for [{section}] {option}"
+                    assert (
+                        False
+                    ), f"Missing configuration from template: [{section}] [{option}]"
 
         # Handle config values with substitute patterns
         for section in Configuration._CONFIG.sections():
@@ -75,7 +78,7 @@ class Configuration:
                 value = Configuration._CONFIG.get(section, option)
         except (configparser.NoSectionError, configparser.NoOptionError):
             value = None
-            assert False, f"Missing configuration for [{section}] {option}"
+            assert False, f"Missing configuration for [{section}] [{option}]"
 
         return value
 

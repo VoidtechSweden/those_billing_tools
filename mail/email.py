@@ -46,9 +46,11 @@ class Email:
         print("================================")
         if self.attachment_path is not None:
             print(f"FILE: {self.attachment_path}")
-        print(f"FROM: <{Configuration.get("mail", "my_email")}>")
+        print(f"FROM: <{Configuration.get("identification", "email")}>")
         if Configuration.getboolean("DEBUG", "mail_to_self_only"):
-            print(f"TO:   <{Configuration.get("mail", "my_email")}> (DEBUG MODE)")
+            print(
+                f"TO:   <{Configuration.get("identification", "email")}> (DEBUG MODE)"
+            )
         else:
             print(f"TO:   <{self.recipient}>")
             if self.cc_recipient:
@@ -61,19 +63,19 @@ class Email:
         # Create the container email message.
         msg = EmailMessage()
         msg["Subject"] = self.subject_text
-        msg["From"] = Configuration.get("mail", "my_email")
+        msg["From"] = Configuration.get("identification", "email")
         if Configuration.getboolean("DEBUG", "mail_to_self_only"):
             print(
                 "DEBUG: Overriding recipient to send mail to self only (mail_to_self_only=True)"
             )
-            msg["To"] = Configuration.get("mail", "my_email")
+            msg["To"] = Configuration.get("identification", "email")
         else:
             msg["To"] = self.recipient
             if self.cc_recipient:
                 msg["Cc"] = self.cc_recipient
 
         msg.set_content(self.body_text)
-        msg["Bcc"] = Configuration.get("mail", "my_email")  # Bcc to self
+        msg["Bcc"] = Configuration.get("identification", "email")  # Bcc to self
 
         if self.attachment_path is not None:
             # Deduct mime type of the file
