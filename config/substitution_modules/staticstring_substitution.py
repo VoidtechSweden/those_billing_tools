@@ -5,18 +5,18 @@ import re
 class StaticStringSubstitution(SubstitutionModule):
     """A dummy module that always matches a static string"""
 
-    def __init__(self, static_string):
+    def __init__(self, static_string: str) -> None:
         super().__init__()
 
         self.__static_string = static_string
         self.__static_string_escaped = re.escape(static_string)
 
-    def match(self):
+    def match(self) -> str:
         return self.__static_string_escaped
 
     @classmethod
-    def name(cls):
+    def name(cls) -> str:
         return "staticstring"
 
-    def to_string(self):
+    def to_string(self) -> str:
         return self.__static_string

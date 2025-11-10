@@ -25,17 +25,17 @@ class Email:
         body_text,
         cc_recipient=None,
         attachment_path=None,
-    ):
-        self.recipient = recipient
-        self.subject_text = subject_text
-        self.body_text = body_text
-        self.cc_recipient = cc_recipient
+    ) -> None:
+        self.recipient: str = recipient
+        self.subject_text: str = subject_text
+        self.body_text: str = body_text
+        self.cc_recipient: str | None = cc_recipient
+        self.attachment_path: str | None = attachment_path
+
+    def add_attachment(self, attachment_path: str) -> None:
         self.attachment_path = attachment_path
 
-    def add_attachment(self, attachment_path):
-        self.attachment_path = attachment_path
-
-    def send(self):
+    def send(self) -> bool:
         """
         Send an email with an optional attachment
         return True if sent OK, False if failed
@@ -88,11 +88,14 @@ class Email:
                 elif self.attachment_path.endswith(".pdf"):
                     mime_type = "application/pdf"
 
+            assert mime_type is not None, "Could not deduce mime type of attachment"
+            mimetype_split = mime_type.split("/")
+
             with open(self.attachment_path, "rb") as fp:
                 msg.add_attachment(
                     fp.read(),
-                    maintype=mime_type.split("/")[0],
-                    subtype=mime_type.split("/")[1],
+                    maintype=mimetype_split[0],
+                    subtype=mimetype_split[1],
                     filename=os.path.basename(self.attachment_path),
                 )
         else:

@@ -8,12 +8,12 @@ from config.substitution_modules.substitution_module import (
 @register_substitution_module
 class NameSubstitution(SubstitutionModule):
 
-    def match(self):
+    def match(self) -> str:
         return Configuration.instance().identification.name
 
     @classmethod
-    def name(cls):
+    def name(cls) -> str:
         return "name"
 
-    def to_string(self):
+    def to_string(self) -> str:
         return Configuration.instance().identification.name

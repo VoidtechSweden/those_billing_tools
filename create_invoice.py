@@ -14,12 +14,10 @@ import sys
 def main():
     print(f"Creating invoice for {Configuration.instance().identification.company}")
 
-    invoice = Invoice()
-
     # Get the correct template to use
-    template_file = billing_tools.get_invoice_template_file()
+    template_file: str = billing_tools.get_invoice_template_file()
     print(f"Using billing template: '{template_file}'")
-    invoice.set_template_file(template_file)
+    invoice = Invoice(template_file)
 
     # Get invoice date
     date_field = InvoiceDateField()

@@ -4,13 +4,13 @@ from billing.fields.invoice_field import InvoiceField
 class MonthPeriodField(InvoiceField):
     """Class for invoice month period field"""
 
-    def __init__(self, date):
+    def __init__(self, date) -> None:
         self.__date = date
         self.__month_period = ""
         super().__init__()
 
-    def _month_to_shortstring(self, month):
-        month_map = {
+    def _month_to_shortstring(self, month: int) -> str:
+        month_map: dict[int, str] = {
             1: "JAN",
             2: "FEB",
             3: "MARS",
@@ -26,14 +26,14 @@ class MonthPeriodField(InvoiceField):
         }
         return month_map.get(month, "")
 
-    def get_value(self):
+    def get_value(self) -> str:
         return self.__month_period
 
-    def get_field(self):
+    def get_field(self) -> str:
         return "G19"
 
-    def _process_value(self):
+    def _process_value(self) -> None:
         self.__month_period = self._month_to_shortstring(self.__date.month)
 
-    def get_description(self):
+    def get_description(self) -> str:
         return "Billing period"

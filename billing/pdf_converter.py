@@ -7,14 +7,14 @@ from config.config import Configuration
 class InvoicePdfConverter:
 
     @staticmethod
-    def __get_expected_executable_name():
+    def __get_expected_executable_name() -> str:
         if os.name == "nt":
             return "soffice.exe"
         else:
             return "libreoffice"
 
     @staticmethod
-    def convert_invoice(invoice_path):
+    def convert_invoice(invoice_path) -> str | None:
         """
         Convert the given excel invoice file to PDF using LibreOffice if installed
         Returns the path to the PDF file, or None if conversion failed

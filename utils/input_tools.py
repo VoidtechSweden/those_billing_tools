@@ -1,9 +1,9 @@
-import datetime
+from datetime import datetime
 
 from utils import exit_tools
 
 
-def input_password(prompt):
+def input_password(prompt) -> str:
     """
     Prompt the user for a password (input hidden)
     """
@@ -17,7 +17,7 @@ def input_password(prompt):
             print("Password can not be empty.")
 
 
-def input_number(prompt, default=None):
+def input_number(prompt, default=None) -> int:
     """
     Prompt the user for a number, with a default value
     """
@@ -38,7 +38,7 @@ def input_number(prompt, default=None):
             print("Invalid input. Please enter a positive integer.")
 
 
-def input_date(prompt, default):
+def input_date(prompt, default) -> datetime:
     """
     Prompt the user for a date in YYYY-MM-DD format, with a default value
     """

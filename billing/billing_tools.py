@@ -8,7 +8,7 @@ from config.config import Configuration
 BILL_FILE_TYPE = ".xlsx"
 
 
-def __find_all_invoices():
+def __find_all_invoices() -> list[str]:
 
     # find all .xlsx files in all subdirectories that match the invoice pattern
 
@@ -28,14 +28,14 @@ def __find_all_invoices():
     return invoice_files
 
 
-def invoice_already_exists(invoice_number):
+def invoice_already_exists(invoice_number: int) -> bool:
     """
     Check if an invoice with the given number already exists in any year folder
     """
     return invoice_number in get_all_existing_invoice_numbers()
 
 
-def get_all_existing_invoice_numbers():
+def get_all_existing_invoice_numbers() -> list[int]:
     """
     Look in all subdirectories for existing invoices and return a list of all invoice numbers found
     """
@@ -57,7 +57,7 @@ def get_all_existing_invoice_numbers():
     return bill_numbers
 
 
-def get_latest_invoice_nr():
+def get_latest_invoice_nr() -> int:
     """
     Look in the latest year directory for existing invoices and find the last invoice number
     """
@@ -67,7 +67,7 @@ def get_latest_invoice_nr():
     return 0
 
 
-def get_invoice_path_from_nr(invoice_number):
+def get_invoice_path_from_nr(invoice_number: int) -> str | None:
     """
     Given a invoice number, return the path to the invoice file if it exists
     otherwise return None
@@ -83,7 +83,7 @@ def get_invoice_path_from_nr(invoice_number):
     return None
 
 
-def create_invoice_name(invoice_number):
+def create_invoice_name(invoice_number: int) -> str:
     """
     Create a invoice name from the invoice number
     """
@@ -91,7 +91,7 @@ def create_invoice_name(invoice_number):
     return invoice_pattern.to_string_with_number(invoice_number) + BILL_FILE_TYPE
 
 
-def create_invoice_path(invoice_number):
+def create_invoice_path(invoice_number: int) -> str:
     """
     Create the full path for the invoice file based on where the last invoice was saved
     """
@@ -111,7 +111,7 @@ def create_invoice_path(invoice_number):
     )
 
 
-def get_invoice_template_file():
+def get_invoice_template_file() -> str:
     """
     Get the billing template file to use
     """

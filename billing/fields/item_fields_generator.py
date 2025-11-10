@@ -1,6 +1,7 @@
 import openpyxl
 
 from billing.fields.billable_item_field import BillableItemField
+from billing.fields.invoice_field import InvoiceField
 from billing.fields.normal_hours_field import NormalHoursField
 from utils import input_tools
 
@@ -14,23 +15,25 @@ class ItemFieldsGenerator:
     A class responsible for generating fields for billable items for an invoice, based on the item fields in the provided template file.
     """
 
-    def __init__(self, template_file):
+    def __init__(self, template_file: str) -> None:
         self._template_file = template_file
 
-    def generate_item_fields(self):
+    def generate_item_fields(self) -> list[InvoiceField]:
         """
         Generate item fields for the invoice based on the rows of billable items in the template file
         """
 
-        item_fields = []
-        optional_fields = []
+        item_fields: list[InvoiceField] = []
+        optional_fields: list[tuple[str, str]] = []
 
         # Normal hours are always mandatory
         normal_hours = NormalHoursField()
         item_fields.append(normal_hours)
 
         wb = openpyxl.load_workbook(self._template_file, read_only=True)
+        assert wb is not None, "Workbook could not be loaded"
         ws = wb.active
+        assert ws is not None, "Worksheet could not be loaded"
 
         normal_hours_field = normal_hours.get_field()
         item_start_row = int(normal_hours_field[1:])

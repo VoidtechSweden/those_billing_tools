@@ -19,5 +19,7 @@ jobs:
         run: scripts/check_black.sh
       - name: Check flake8
         run: scripts/check_flake8.sh
+      - name: Check mypy
+        run: scripts/check_mypy.sh
       - name: Check unit tests
         run: scripts/check_tests.sh

@@ -15,7 +15,7 @@ class IdentificationConfig:
 @dataclass
 class BillingConfig:
     invoice_path: str
-    invoice_pattern: ConfigPattern
+    invoice_pattern: ConfigPattern | None
     template_path: str
     template_prefix: str
     create_pdf: bool
@@ -60,7 +60,7 @@ class Configuration:
         self._load()
         self._initialized = True
 
-    def reload_config_file(self, config_file=None):
+    def reload_config_file(self, config_file=None) -> None:
         if config_file:
             self.config_file = config_file
         self._load()
@@ -71,7 +71,7 @@ class Configuration:
             cls._instance = cls()
         return cls._instance
 
-    def __populate_dataclasses_from_parser(self, parser):
+    def __populate_dataclasses_from_parser(self, parser) -> None:
         self.identification = IdentificationConfig(
             name=parser.get("identification", "name"),
             company=parser.get("identification", "company"),
@@ -100,7 +100,7 @@ class Configuration:
             mail_to_self_only=parser.getboolean("DEBUG", "mail_to_self_only"),
         )
 
-    def _load(self):
+    def _load(self) -> None:
         if not os.path.exists(self.config_file):
             raise FileNotFoundError(
                 f"Configuration file '{self.config_file}' not found."

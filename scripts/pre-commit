@@ -25,7 +25,16 @@ if [ $? -ne 0 ]; then
 fi
 
 echo
-echo "4. Running unit tests..."
+echo "4. Checking static type checking analysis with mypy..."
+./scripts/check_mypy.sh
+if [ $? -ne 0 ]; then
+    echo
+    echo -e "\033[1;31mMypy type checking failed. Please fix the issues.\033[0m"
+    exit 1
+fi
+
+echo
+echo "5. Running unit tests..."
 ./scripts/check_tests.sh
 if [ $? -ne 0 ]; then
     echo

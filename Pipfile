@@ -9,6 +9,8 @@ flake8 = "*"
 openpyxl = "*"
 pytest = "*"
 pytest-sugar = "*"
+mypy = "*"
+types-openpyxl = "*"
 
 [dev-packages]
 

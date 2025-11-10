@@ -18,9 +18,9 @@ def main():
 
     # Check that the invoice files exists
     invoice_path = billing_tools.get_invoice_path_from_nr(invoice_number)
-    if not invoice_path:
+    if invoice_path is None:
         exit_tools.paused_exit(f"Could not find invoice {invoice_number}")
-    if Configuration.instance().mailing.send_pdf:
+    elif Configuration.instance().mailing.send_pdf:
         pdf_path = invoice_path.replace(".xlsx", ".pdf")
         if not os.path.exists(pdf_path):
             exit_tools.paused_exit(f"Could not find PDF file '{pdf_path}'")
