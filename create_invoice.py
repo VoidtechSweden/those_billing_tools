@@ -1,7 +1,6 @@
 from billing.fields.invoice_date_field import InvoiceDateField
 from billing.fields.invoice_number_field import InvoiceNumberField
 from billing.fields.month_period_field import MonthPeriodField
-from billing.fields.normal_hours_field import NormalHoursField
 from billing.invoice import Invoice
 from utils import exit_tools
 
@@ -17,15 +16,17 @@ def main():
 
     invoice = Invoice()
 
+    # Get the correct template to use
+    template_file = billing_tools.get_invoice_template_file()
+    print(f"Using billing template: '{template_file}'")
+    invoice.set_template_file(template_file)
+
     # Get invoice date
     date_field = InvoiceDateField()
     invoice.add_field(date_field)
     month_field = MonthPeriodField(date_field.get_date())
     invoice.add_field(month_field)
     print("Billing period: " + month_field.get_value())
-
-    # Get normal hours
-    invoice.add_field(NormalHoursField())
 
     # Get new invoice number
     invoice_number_field = InvoiceNumberField()
@@ -39,10 +40,9 @@ def main():
             "Exiting to avoid overwriting an existing file.",
         )
 
-    # Get the correct template to use
-    template_file = billing_tools.get_invoice_template_file()
-    print(f"Using billing template: '{template_file}'")
-    invoice.set_template_file(template_file)
+    # Generate the fields for billing hours or other items
+    # TODO, Utlägg is only filling in the number, not the price
+    invoice.generate_item_fields()
 
     # Create and save the invoices
     invoice.write_invoice()

@@ -2,6 +2,7 @@ from billing import billing_tools
 from billing.pdf_converter import InvoicePdfConverter
 from config.config import Configuration
 from utils import import_tools
+from billing.fields.item_fields_generator import ItemFieldsGenerator
 
 import os
 
@@ -42,6 +43,15 @@ class Invoice:
         self._invoice_path = billing_tools.create_invoice_path(invoice_number)
         print(f"Invoice will be saved as: '{self._invoice_path}'")
 
+    def generate_item_fields(self):
+        """
+        Generate the item fields for the invoice
+        """
+        generator = ItemFieldsGenerator(self._template_file)
+        item_fields = generator.generate_item_fields()
+        for field in item_fields:
+            self.add_field(field)
+
     def write_invoice(self):
         """
         Write the invoice to the specified path
@@ -64,7 +74,9 @@ class Invoice:
             self._pdf_path = InvoicePdfConverter.convert_invoice(self._invoice_path)
 
     def print_summary(self):
-        print("\nInvoice summary")
+        print("")
+        print("================================")
+        print("\nINVOICE SUMMARY")
         print("================================")
         print(f"Template: '{os.path.relpath(self._template_file)}'")
         for field in self._invoice_fields:

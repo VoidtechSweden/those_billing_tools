@@ -54,22 +54,29 @@ def input_date(prompt, default):
             print("Invalid date format. Please enter a date in the format YYYY-MM-DD.")
 
 
-def select_indexed_item(prompt, items):
+def select_indexed_item(prompt, items, optional_selection=False):
     """
     Prompt the user to select an item from a list by index
+    returns the selected item and its index
     """
     if not items:
         print("No items to choose from.")
-        return None
+        return None, None
+    print("")
     print(f"{prompt}:")
     for idx, item in enumerate(items):
         print(f"{idx + 1}: {item}")
     while True:
-        user_input = input(f"Enter a number between 1 and {len(items)}: ")
+        user_input = input(
+            f"Enter a number between 1 and {len(items)} {"(or press Enter to skip)" if optional_selection else ''}: "
+        )
+        if optional_selection:
+            if user_input == "":
+                return None, None
         try:
             index = int(user_input)
             if 1 <= index <= len(items):
-                return items[index - 1]
+                return items[index - 1], index
         except ValueError:
             print("Invalid input.")
 

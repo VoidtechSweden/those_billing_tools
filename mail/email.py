@@ -42,6 +42,8 @@ class Email:
         """
         sent = False
 
+        print("")
+        print("================================")
         print("MAIL:")
         print("================================")
         if self.attachment_path is not None:

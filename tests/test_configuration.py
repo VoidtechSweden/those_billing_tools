@@ -103,7 +103,7 @@ def test_invoice_pattern_substitution():
     """
     TEST: Loading a configuration file with the invoice pattern substitution
 
-    EXPECTED: The invoice pattern is correctly parsed
+    EXPECTED: The invoice pattern is correctly parsed and usable to generate invoice names
     """
 
     invoice_number = 123
@@ -124,7 +124,7 @@ def test_invoice_pattern_substitution():
         # Check that the pattern contains the number substitution
         assert invoice_pattern.contains_number()
 
-        # Verify that the pattern works correctly and gives the expected invoice name
+        # Verify that the pattern works correctly and generates the expected invoice name
         assert invoice_pattern.to_string() == expected_invoice_name
         assert invoice_pattern.to_string_with_number(
             99

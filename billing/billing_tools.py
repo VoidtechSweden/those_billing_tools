@@ -131,7 +131,7 @@ def get_invoice_template_file():
     elif len(template_files) == 1:
         template_file = template_files[0]
     else:
-        template_file = input_tools.select_indexed_item(
+        template_file, index = input_tools.select_indexed_item(
             "Select a billing template", template_files
         )
     return template_file
