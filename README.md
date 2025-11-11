@@ -7,6 +7,12 @@ Billing tools for THoSE consultants
 - Send the Excel invoices to THoSE
 - Send PDF invoices to your billing system
 
+## Not yet supported features
+
+* Linux/MacOS support
+* TLS settings for mail (Now forced STARTTLS)
+* "Utlägg" field to enter price per expendature
+
 ## Usage
 
 ### Requirements
@@ -55,4 +61,3 @@ You may need to run pip commands using `python -m pip install pipenv` instead of
 ## License
 
 MIT License
-
