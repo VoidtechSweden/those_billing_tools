@@ -3,7 +3,6 @@ from billing.fields.invoice_field import InvoiceField
 from billing.pdf_converter import InvoicePdfConverter
 from config.config import Configuration
 from utils import import_tools
-from billing.fields.item_fields_generator import ItemFieldsGenerator
 
 import os
 
@@ -30,6 +29,12 @@ class Invoice:
         """
         self._invoice_fields.append(field)
 
+    def add_fields(self, fields: list[InvoiceField]) -> None:
+        """
+        Add multiple invoice fields to be written
+        """
+        self._invoice_fields.extend(fields)
+
     def set_invoice_number(self, invoice_number: int) -> None:
         """
         Set the invoice number
@@ -37,16 +42,6 @@ class Invoice:
         self._invoice_number = invoice_number
         self._invoice_path = billing_tools.create_invoice_path(invoice_number)
         print(f"Invoice will be saved as: '{self._invoice_path}'")
-
-    def generate_item_fields(self) -> None:
-        """
-        Generate the item fields for the invoice
-        """
-
-        generator = ItemFieldsGenerator(self._template_file)
-        item_fields = generator.generate_item_fields()
-        for field in item_fields:
-            self.add_field(field)
 
     def write_invoice(self) -> None:
         """

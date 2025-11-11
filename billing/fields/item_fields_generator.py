@@ -15,10 +15,8 @@ class ItemFieldsGenerator:
     A class responsible for generating fields for billable items for an invoice, based on the item fields in the provided template file.
     """
 
-    def __init__(self, template_file: str) -> None:
-        self._template_file = template_file
-
-    def generate_item_fields(self) -> list[InvoiceField]:
+    @staticmethod
+    def generate_item_fields(template_file: str) -> list[InvoiceField]:
         """
         Generate item fields for the invoice based on the rows of billable items in the template file
         """
@@ -30,7 +28,7 @@ class ItemFieldsGenerator:
         normal_hours = NormalHoursField()
         item_fields.append(normal_hours)
 
-        wb = openpyxl.load_workbook(self._template_file, read_only=True)
+        wb = openpyxl.load_workbook(template_file, read_only=True)
         assert wb is not None, "Workbook could not be loaded"
         ws = wb.active
         assert ws is not None, "Worksheet could not be loaded"

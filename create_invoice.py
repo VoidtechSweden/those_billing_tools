@@ -1,5 +1,6 @@
 from billing.fields.invoice_date_field import InvoiceDateField
 from billing.fields.invoice_number_field import InvoiceNumberField
+from billing.fields.item_fields_generator import ItemFieldsGenerator
 from billing.fields.month_period_field import MonthPeriodField
 from billing.invoice import Invoice
 from utils import exit_tools
@@ -40,7 +41,7 @@ def main():
 
     # Generate the fields for billing hours or other items
     # TODO, Utlägg is only filling in the number, not the price
-    invoice.generate_item_fields()
+    invoice.add_fields(ItemFieldsGenerator.generate_item_fields(template_file))
 
     # Create and save the invoices
     invoice.write_invoice()
