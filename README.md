@@ -1,4 +1,4 @@
-# THoSE Billing TOols
+# THoSE Billing Tools
 Billing tools for THoSE consultants
 
 ## Features
