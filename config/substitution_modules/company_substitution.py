@@ -9,7 +9,7 @@ from config.substitution_modules.substitution_module import (
 class CompanySubstitution(SubstitutionModule):
 
     def match(self) -> str:
-        return Configuration.instance().identification.company
+        return f"{Configuration.instance().identification.company}"
 
     @classmethod
     def name(cls) -> str:

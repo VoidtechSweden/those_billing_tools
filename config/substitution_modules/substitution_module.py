@@ -12,6 +12,9 @@ def register_substitution_module(cls):
 
 class SubstitutionModule(ABC):
 
+    def __init__(self, param: str = "") -> None:
+        pass
+
     @abstractmethod
     def match(self) -> str:
         """The pattern to match"""

@@ -15,12 +15,18 @@ class ConfigPattern:
 
         def create_substitution_module(string: str) -> SubstitutionModule:
             if string.startswith("{") and string.endswith("}"):
-                substitution_name = string[1:-1]
+                # split on colon to allow parameters
+                substitution_split = string[1:-1].split(":")
+                substitution_name = substitution_split[0]
+                substitution_param = ""
+                if len(substitution_split) > 1:
+                    substitution_param = substitution_split[1]
+
                 for (
                     substitution_class
                 ) in SubstitutionModuleRegistry.get_registered_modules():
                     if substitution_class.name() == substitution_name:
-                        return substitution_class()
+                        return substitution_class(substitution_param)
                 assert False, f"Unknown substitution '{substitution_name}'"
             else:
                 from config.substitution_modules.staticstring_substitution import (
@@ -38,20 +44,26 @@ class ConfigPattern:
                 else:
                     in_braces = True
                     if current:
-                        self.__modules.append(create_substitution_module(current))
+                        self.__modules.append(
+                            create_substitution_module(current)
+                        )  # Adds static string before {
                     current = char
             elif char == "}":
                 if in_braces:
                     in_braces = False
                     current += char
-                    self.__modules.append(create_substitution_module(current))
+                    self.__modules.append(
+                        create_substitution_module(current)
+                    )  # Adds substitution module based on whats inside {}
                     current = ""
                 else:
                     current += char
             else:
                 current += char
         if current:
-            self.__modules.append(create_substitution_module(current))
+            self.__modules.append(
+                create_substitution_module(current)
+            )  # Adds remaining static string
 
     def contains_number(self) -> bool:
         for module in self.__modules:
@@ -60,7 +72,7 @@ class ConfigPattern:
         return False
 
     def get_regexp(self) -> str:
-        regexp = ""
+        regexp = "(?i)"  # Add case insensitivity at the start
         for module in self.__modules:
             regexp += module.match()
         return regexp
