@@ -17,8 +17,8 @@ Billing tools for THoSE consultants
 
 ### Requirements
 
-1. Windows OS (For now)
-2. Python 3.13 or later
+1. Windows or Linux
+2. Python 3 or later
 3. openpyxl (install with pip install openpyxl, or run scripts within pipenv)
 4. Libreoffice installed for PDF conversion
 
@@ -31,13 +31,13 @@ For detailed description about each field in the config file, see [Configuration
 
 ### Creating an Invoice
 
-1. Run `create_invoice.py` (Either by running from windows explorer, or from terminal)
+1. Run `create_invoice.py` (Either by running from explorer, or from terminal)
 2. Enter the prompted information, such as date, hours worked, bill number.
 3. The tool will generate both XLSX and PDF versions of the invoice in the same directory as the last invoice
 
 ### Sending an Invoice
 
-1. Run `send_invoice.py` (Either by running from windows explorer, or from terminal)
+1. Run `send_invoice.py` (Either by running from explorer, or from terminal)
 2. Select the invoice number you want to send.
 3. The script will email the invoice to THoSE and optionally to your billing system, depending on your configuration.
 

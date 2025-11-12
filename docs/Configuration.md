@@ -13,7 +13,7 @@ This document describes all configuration fields used in the application.
 - **template_path**: Directory path for invoice templates. No recursive search is used here.
 - **template_prefix**: Prefix used to identify invoice template files.
 - **create_pdf**: Boolean (`True`/`False`) to enable PDF creation for invoices.
-- **pdf_converter**: Path to the PDF conversion executable (e.g., LibreOffice).
+- **pdf_converter**: Path to the PDF conversion executable (e.g., soffice from LibreOffice). 
 
 ## `[mailing]`
 - **invoice_recipient**: Primary email address to send Excel invoices to.
