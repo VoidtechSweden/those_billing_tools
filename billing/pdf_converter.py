@@ -11,7 +11,7 @@ class InvoicePdfConverter:
         if os.name == "nt":
             return "soffice.exe"
         else:
-            return "libreoffice"
+            return "soffice"
 
     @staticmethod
     def convert_invoice(invoice_path) -> str | None:
