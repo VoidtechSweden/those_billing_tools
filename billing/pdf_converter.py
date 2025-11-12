@@ -1,5 +1,7 @@
 import os
+import shutil
 import subprocess
+import sys
 
 from config.config import Configuration
 
@@ -8,10 +10,12 @@ class InvoicePdfConverter:
 
     @staticmethod
     def __get_expected_executable_name() -> str:
-        if os.name == "nt":
+        if sys.platform == "win32":
             return "soffice.exe"
-        else:
+        elif sys.platform.startswith("linux"):
             return "soffice"
+        else:
+            assert False, f"Unsupported OS: {sys.platform}"
 
     @staticmethod
     def convert_invoice(invoice_path) -> str | None:
@@ -32,6 +36,11 @@ class InvoicePdfConverter:
             print(
                 f"Cannot create PDF. Specified PDF converter {pdf_converter} is not a {InvoicePdfConverter.__get_expected_executable_name()}"
             )
+
+        # Check if the pdf_converter is a valid command with shutil.which , and use that path if found
+        which_result = shutil.which(pdf_converter)
+        if which_result is not None:
+            pdf_converter = which_result
 
         if os.path.exists(pdf_converter):
             proposed_pdf_path = invoice_path.replace(".xlsx", ".pdf")
