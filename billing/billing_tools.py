@@ -16,7 +16,7 @@ def __find_all_invoices() -> list[str]:
     invoice_regexp = Configuration.instance().billing.invoice_pattern.get_regexp()
 
     # check if invoice directory exists
-    invoices_path = Configuration.instance().billing.invoice_path
+    invoices_path = Configuration.instance().billing.invoices_path
     if not os.path.exists(invoices_path):
         assert False, f"Invoice directory does not exist: {invoices_path}"
 
@@ -105,7 +105,7 @@ def create_invoice_path(invoice_number: int) -> str:
         (
             os.path.dirname(last_invoice_file)
             if last_invoice_file
-            else Configuration.instance().billing.invoice_path
+            else Configuration.instance().billing.invoices_path
         ),
         invoice_name,
     )

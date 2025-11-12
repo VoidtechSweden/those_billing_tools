@@ -97,8 +97,8 @@ def test_currentdir_substitution():
     ]
 
     with temporary_config(updated_fields=config_fields):
-        assert Configuration.instance().billing.invoice_path.startswith(os.getcwd())
-        assert Configuration.instance().billing.invoice_path.endswith("../testfolder/")
+        assert Configuration.instance().billing.invoices_path.startswith(os.getcwd())
+        assert Configuration.instance().billing.invoices_path.endswith("../testfolder/")
 
 
 def test_invoice_pattern_substitution():
@@ -108,12 +108,33 @@ def test_invoice_pattern_substitution():
     EXPECTED: The invoice pattern is correctly parsed and usable to generate invoice names
     """
 
+    months_names_swe = [
+        "Januari",
+        "Februari",
+        "Mars",
+        "April",
+        "Maj",
+        "Juni",
+        "Juli",
+        "Augusti",
+        "September",
+        "Oktober",
+        "November",
+        "December",
+    ]
+
     invoice_number = 123
     company = "testcompany"
+    expected_month = months_names_swe[date.today().month - 1]
     expected_date = date.today().strftime("%Y-%m-%d")
-    expected_invoice_name = f"{company}-{expected_date} FAKTURA {invoice_number}"
+    expected_invoice_name = (
+        f"{company}-{expected_date}-{expected_month} FAKTURA {invoice_number}"
+    )
+    expected_invoice_name_UPPER = (
+        f"{company}-{expected_date}-{expected_month} FAKTURA {invoice_number}".upper()
+    )
 
-    config_pattern = "{company}-{date} FAKTURA {number}"
+    config_pattern = "{company}-{date}-{month:swe} FAKTURA {number}"
     config_fields = [
         ("billing", "invoice_pattern", config_pattern),
         ("identification", "company", company),
@@ -134,9 +155,15 @@ def test_invoice_pattern_substitution():
 
         # Verify that the regexp works correctly and can be matched to the expected invoice name
         regexp = invoice_pattern.get_regexp()
+        print(f"Generated regexp: {regexp}")
         match = re.match(regexp, expected_invoice_name)
         assert match is not None
         assert match.group(0) == expected_invoice_name
+
+        # Verify that the regexp is case insensitive
+        match_upper = re.match(regexp, expected_invoice_name_UPPER)
+        assert match_upper is not None
+        assert match_upper.group(0) == expected_invoice_name_UPPER
 
         # Use the pattern to find the number value from the expected invoice name
         found_number = invoice_pattern.find_substitution_value(

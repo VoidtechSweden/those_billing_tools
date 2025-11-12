@@ -14,7 +14,7 @@ class IdentificationConfig:
 
 @dataclass
 class BillingConfig:
-    invoice_path: str
+    invoices_path: str
     invoice_pattern: ConfigPattern | None
     template_path: str
     template_prefix: str
@@ -78,7 +78,7 @@ class Configuration:
             email=parser.get("identification", "email"),
         )
         self.billing = BillingConfig(
-            invoice_path=parser.get("billing", "invoices_path"),
+            invoices_path=parser.get("billing", "invoices_path"),
             invoice_pattern=None,  # to be set later
             template_path=parser.get("billing", "template_path"),
             template_prefix=parser.get("billing", "template_prefix"),

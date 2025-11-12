@@ -21,5 +21,7 @@ jobs:
         run: scripts/check_flake8.sh all
       - name: Static type checking with mypy
         run: scripts/check_mypy.sh all
+      - name: Check config fields consistency
+        run: python3 scripts/check_config_fields.py
       - name: Run unit tests
         run: scripts/check_tests.sh

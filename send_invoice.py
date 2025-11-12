@@ -19,11 +19,11 @@ def main():
     )
 
     # Check that the invoice files exists
-    invoice_path = billing_tools.get_invoice_path_from_nr(invoice_number)
-    if invoice_path is None:
+    invoices_path = billing_tools.get_invoice_path_from_nr(invoice_number)
+    if invoices_path is None:
         exit_tools.paused_exit(f"Could not find invoice {invoice_number}")
     elif Configuration.instance().mailing.send_pdf:
-        pdf_path = invoice_path.replace(".xlsx", ".pdf")
+        pdf_path = invoices_path.replace(".xlsx", ".pdf")
         if not os.path.exists(pdf_path):
             exit_tools.paused_exit(f"Could not find PDF file '{pdf_path}'")
 
@@ -33,7 +33,7 @@ def main():
         subject_text=f"{Configuration.instance().identification.company} faktura",
         body_text=f"Hej!\n\nBifogar månadens faktura för {Configuration.instance().identification.company}.\n\nMvh {Configuration.instance().identification.name}",
         cc_recipient=Configuration.instance().mailing.invoice_cc,
-        attachment_path=invoice_path,
+        attachment_path=invoices_path,
     )
     if not invoice_email.send():
         exit_tools.paused_exit("Could not send Excel invoice email")

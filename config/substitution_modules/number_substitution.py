@@ -7,7 +7,8 @@ from config.substitution_modules.substitution_module import (
 @register_substitution_module
 class NumberSubstitution(SubstitutionModule):
 
-    def __init__(self) -> None:
+    def __init__(self, param) -> None:
+        super().__init__(param)
         self.__invoice_number: int = 0
 
     def match(self) -> str:
