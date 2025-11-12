@@ -1,9 +1,21 @@
 #!/bin/sh
 
-files=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.py$')
-if [ -n "$files" ]; then
-    python -m pipenv run mypy --check-untyped-defs $files
+RUN_MYPY="python3 -m pipenv run mypy --check-untyped-defs"
+RET=0
+
+if [ "$1" = "all" ]; then
+    echo "Checking all Python files in repo"
+    $RUN_MYPY .
+    RET=$?
 else
-    echo "No staged Python files to check with mypy"
+    echo "Checking committed Python files"  
+    files=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.py$')
+    if [ -n "$files" ]; then
+        $RUN_MYPY $files
+        RET=$?
+    else
+        echo "No Python files to check."
+    fi
 fi
-exit $?
+    
+exit $RET

@@ -7,7 +7,7 @@ on:
 
 jobs:
   checks:
-    runs-on: pipenv
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -15,11 +15,11 @@ jobs:
         run: pip install pipenv
       - name: Install dependencies
         run: pipenv sync
-      - name: Check black
-        run: scripts/check_black.sh
-      - name: Check flake8
-        run: scripts/check_flake8.sh
-      - name: Check mypy
-        run: scripts/check_mypy.sh
-      - name: Check unit tests
+      - name: Format check with black
+        run: scripts/check_black.sh all
+      - name: Static analysis with flake8
+        run: scripts/check_flake8.sh all
+      - name: Static type checking with mypy
+        run: scripts/check_mypy.sh all
+      - name: Run unit tests
         run: scripts/check_tests.sh

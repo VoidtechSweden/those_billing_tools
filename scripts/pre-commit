@@ -4,7 +4,7 @@ echo "Running pre-commit checks..."
 
 echo
 echo "1. Installing dependencies ..."
-python -m pipenv sync 
+python3 -m pipenv sync 
 
 echo
 echo "2. Checking formatting with black..."
