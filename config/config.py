@@ -53,11 +53,9 @@ class Configuration:
             cls._instance._initialized = False
         return cls._instance
 
-    def __init__(self, config_file="my.config"):
+    def __init__(self):
         if getattr(self, "_initialized", False):
             return
-        self.config_file = config_file
-        self._load()
         self._initialized = True
 
     def reload_config_file(self, config_file=None) -> None:
@@ -66,9 +64,11 @@ class Configuration:
         self._load()
 
     @classmethod
-    def instance(cls):
+    def instance(cls, config_file="my.config"):
         if cls._instance is None:
             cls._instance = cls()
+            cls._instance.config_file = config_file
+            cls._instance._load()
         return cls._instance
 
     def __populate_dataclasses_from_parser(self, parser) -> None:

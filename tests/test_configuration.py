@@ -32,7 +32,9 @@ def temporary_config(updated_fields=[], invalid=False):
         config.write(tmp)
         tmp.flush()
         tmp.seek(0)
-        Configuration.instance().reload_config_file(tmp.name)
+        Configuration.instance(tmp.name).reload_config_file(
+            tmp.name
+        )  # Needed to reload singleton
         yield
     os.remove(tmpfile)
 
