@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from billing.fields.invoice_date_field import InvoiceDateField
 from billing.fields.invoice_number_field import InvoiceNumberField
 from billing.fields.item_fields_generator import ItemFieldsGenerator

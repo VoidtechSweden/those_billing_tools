@@ -1,4 +1,4 @@
 #!/bin/sh
 
-python -m pipenv run pytest
+python3 -m pipenv run pytest
 exit $?
