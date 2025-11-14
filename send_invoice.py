@@ -30,8 +30,8 @@ def main():
     # Send the invoice email
     invoice_email = email.Email(
         recipient=Configuration.instance().mailing.invoice_recipient,
-        subject_text=f"{Configuration.instance().identification.company} faktura",
-        body_text=f"Hej!\n\nBifogar månadens faktura för {Configuration.instance().identification.company}.\n\nMvh {Configuration.instance().identification.name}",
+        subject_text=Configuration.instance().mailing.invoice_subject,
+        body_text=Configuration.instance().mailing.invoice_body,
         cc_recipient=Configuration.instance().mailing.invoice_cc,
         attachment_path=invoices_path,
     )
@@ -42,8 +42,8 @@ def main():
     if Configuration.instance().mailing.send_pdf:
         pdf_email = email.Email(
             recipient=Configuration.instance().mailing.pdf_recipient,
-            subject_text=f"{Configuration.instance().identification.company}, utgående faktura",
-            body_text="",
+            subject_text=Configuration.instance().mailing.pdf_subject,
+            body_text=Configuration.instance().mailing.pdf_body,
             cc_recipient=None,
             attachment_path=pdf_path,
         )
