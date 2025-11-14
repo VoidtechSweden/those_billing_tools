@@ -54,6 +54,7 @@ def get_all_existing_invoice_numbers() -> list[int]:
         except (IndexError, ValueError):
             continue
 
+    bill_numbers.sort()
     return bill_numbers
 
 

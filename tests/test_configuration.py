@@ -1,44 +1,12 @@
-import configparser
 import os
 import re
 
 import pytest
 from config.config import Configuration
-import tempfile
-import contextlib
 from datetime import date
 
+from tests.conftest import temporary_config
 from utils import language_tools
-
-CONFIG_TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), "../template.config")
-
-
-@contextlib.contextmanager
-def temporary_config(updated_fields=[], invalid=False):
-    """Create and use temporary configuration file for testing purposes."""
-
-    config = configparser.ConfigParser()
-    config.read(CONFIG_TEMPLATE_PATH)
-
-    for section, option, value in updated_fields:
-        if not config.has_section(section):
-            config.add_section(section)
-        config.set(section, option, value)
-
-    if invalid:
-        config.remove_option("identification", "company")
-
-    tmpfile = None
-    with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=".config") as tmp:
-        tmpfile = tmp.name
-        config.write(tmp)
-        tmp.flush()
-        tmp.seek(0)
-        Configuration.instance(tmp.name).reload_config_file(
-            tmp.name
-        )  # Needed to reload singleton
-        yield
-    os.remove(tmpfile)
 
 
 def test_template_configuration():
@@ -131,9 +99,9 @@ def test_custom_placeholder_recursive():
 
     # One level of recursion
     config_fields = [
+        ("identification", "name", "{placeholder1}"),
         ("placeholders", "placeholder1", "{placeholder2}"),
         ("placeholders", "placeholder2", placeholdervalue),
-        ("identification", "name", "{placeholder1}"),
     ]
 
     with temporary_config(updated_fields=config_fields):
@@ -167,6 +135,7 @@ class TestInvoicePattern:
             "-",
             ".",
             "_",
+            "",
         ],
     )
     def test_substitution(self, divider, language):
