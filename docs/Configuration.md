@@ -32,7 +32,10 @@ This document describes all configuration fields used in the application.
 
 ## Placeholders
 
-Placeholders are special tokens used in configuration fields to dynamically insert values. Some placeholders can accept parameters by adding a colon (`:`) and the parameter after the placeholder name. These placeholders are supported:
+Placeholders are special tokens used in configuration fields to dynamically insert values. Some placeholders can accept parameters by adding a colon (`:`) and the parameter after the placeholder name. 
+Example of this is `{month:swe}`
+
+These placeholders are supported:
 
 - `{number}`: Inserts the invoice number when later entered.
 - `{currentdir}`: Inserts the current working directory path.
@@ -49,5 +52,5 @@ Placeholders are special tokens used in configuration fields to dynamically inse
 
 ### Invoice pattern placeholders
 
-Placeholders in invoice_pattern are used to generically match file name patterns. For example, you can use placeholders to represent any year, date, number, or other variable parts of a file name. This allows flexible matching, such as recognizing files like 2025-MyCompany-invoice-23.xlsx by specifying the pattern like {year}-{company}-invoice-{number}.pdf.
+Placeholders in invoice_pattern are used to generically match file name patterns. For example, you can use placeholders to represent any year, date, number, or other variable parts of a file name. This allows flexible matching, such as recognizing files like `2025 MyCompany_invoice_23.xlsx` by specifying the pattern like `{year} {company}_-_invoice_{number}`.
 

@@ -11,6 +11,8 @@ class MonthSubstitution(SubstitutionModule):
     """Substitution module for month in human-readable format."""
 
     def __init__(self, language: str = "swe"):
+        if language == "":
+            language = "swe"
         self.__language = language_tools.Language.from_string(language)
         super().__init__(language)
 
