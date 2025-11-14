@@ -8,6 +8,8 @@ import tempfile
 import contextlib
 from datetime import date
 
+from utils import language_tools
+
 CONFIG_TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), "../template.config")
 
 
@@ -47,7 +49,7 @@ def test_template_configuration():
     """
 
     with temporary_config():
-        assert Configuration.instance().identification.company == "My Company"
+        assert Configuration.instance().identification.company == "MyCompany"
 
 
 def test_invalid_configuration():
@@ -101,72 +103,119 @@ def test_currentdir_substitution():
         assert Configuration.instance().billing.invoices_path.endswith("../testfolder/")
 
 
-def test_invoice_pattern_substitution():
+def test_custom_placeholder():
     """
-    TEST: Loading a configuration file with the invoice pattern substitution
+    TEST: Loading a configuration file with a custom placeholder substitution
 
-    EXPECTED: The invoice pattern is correctly parsed and usable to generate invoice names
+    EXPECTED: The custom placeholder is correctly applied
     """
 
-    months_names_swe = [
-        "Januari",
-        "Februari",
-        "Mars",
-        "April",
-        "Maj",
-        "Juni",
-        "Juli",
-        "Augusti",
-        "September",
-        "Oktober",
-        "November",
-        "December",
-    ]
-
-    invoice_number = 123
-    company = "testcompany"
-    expected_month = months_names_swe[date.today().month - 1]
-    expected_date = date.today().strftime("%Y-%m-%d")
-    expected_invoice_name = (
-        f"{company}-{expected_date}-{expected_month} FAKTURA {invoice_number}"
-    )
-    expected_invoice_name_UPPER = (
-        f"{company}-{expected_date}-{expected_month} FAKTURA {invoice_number}".upper()
-    )
-
-    config_pattern = "{company}-{date}-{month:swe} FAKTURA {number}"
+    placeholdervalue = "placeholdervalue"
     config_fields = [
-        ("billing", "invoice_pattern", config_pattern),
-        ("identification", "company", company),
+        ("placeholders", "placeholder1", placeholdervalue),
+        ("identification", "name", "{placeholder1}"),
     ]
 
     with temporary_config(updated_fields=config_fields):
-        invoice_pattern = Configuration.instance().billing.invoice_pattern
-        invoice_pattern.set_number(invoice_number)
+        assert Configuration.instance().identification.name == placeholdervalue
 
-        # Check that the pattern contains the number substitution
-        assert invoice_pattern.contains_number()
 
-        # Verify that the pattern works correctly and generates the expected invoice name
-        assert invoice_pattern.to_string() == expected_invoice_name
-        assert invoice_pattern.to_string_with_number(
-            99
-        ) == expected_invoice_name.replace(str(invoice_number), "99")
+def test_custom_placeholder_recursive():
+    """
+    TEST: Loading a configuration file with a custom placeholder substitution that references another custom placeholder
 
-        # Verify that the regexp works correctly and can be matched to the expected invoice name
-        regexp = invoice_pattern.get_regexp()
-        print(f"Generated regexp: {regexp}")
-        match = re.match(regexp, expected_invoice_name)
-        assert match is not None
-        assert match.group(0) == expected_invoice_name
+    EXPECTED: The custom placeholders are correctly applied recursively
+    """
 
-        # Verify that the regexp is case insensitive
-        match_upper = re.match(regexp, expected_invoice_name_UPPER)
-        assert match_upper is not None
-        assert match_upper.group(0) == expected_invoice_name_UPPER
+    placeholdervalue = "placeholdervalue"
 
-        # Use the pattern to find the number value from the expected invoice name
-        found_number = invoice_pattern.find_substitution_value(
-            "number", expected_invoice_name
-        )
-        assert found_number == str(invoice_number)
+    # One level of recursion
+    config_fields = [
+        ("placeholders", "placeholder1", "{placeholder2}"),
+        ("placeholders", "placeholder2", placeholdervalue),
+        ("identification", "name", "{placeholder1}"),
+    ]
+
+    with temporary_config(updated_fields=config_fields):
+        assert Configuration.instance().identification.name == placeholdervalue
+
+    # Several levels of recursion
+    config_fields = [
+        ("placeholders", "placeholder1", "{name}"),
+        ("placeholders", "placeholder2", placeholdervalue),
+        ("identification", "name", "{placeholder2}"),
+        ("identification", "company", "{placeholder1}"),
+    ]
+
+    with temporary_config(updated_fields=config_fields):
+        assert Configuration.instance().identification.company == placeholdervalue
+
+
+class TestInvoicePattern:
+
+    @pytest.mark.parametrize(
+        "language",
+        [
+            language_tools.Language.SWE,
+            language_tools.Language.ENG,
+        ],
+    )
+    @pytest.mark.parametrize(
+        "divider",
+        [
+            " ",
+            "-",
+            ".",
+            "_",
+        ],
+    )
+    def test_substitution(self, divider, language):
+        """
+        TEST: Loading a configuration file with the invoice pattern substitution
+              parametrized with different dividers and languages
+
+        EXPECTED: The invoice pattern is correctly parsed and usable to generate invoice names
+        """
+
+        invoice_number = 123
+        company = "testcompany"
+        expected_month = language_tools.month_to_string(date.today().month, language)
+        expected_date = date.today().strftime("%Y-%m-%d")
+        expected_invoice_name = f"{company}{divider}{expected_date}{divider}{expected_month}{divider}FAKTURA{divider}{invoice_number}"
+
+        config_pattern = f"{{company}}{divider}{{date}}{divider}{{month:{language.value}}}{divider}FAKTURA{divider}{{number}}"
+        config_fields = [
+            ("billing", "invoice_pattern", config_pattern),
+            ("identification", "company", company),
+        ]
+
+        with temporary_config(updated_fields=config_fields):
+            invoice_pattern = Configuration.instance().billing.invoice_pattern
+            invoice_pattern.set_number(invoice_number)
+
+            # Check that the pattern contains the number substitution
+            assert invoice_pattern.contains_number()
+
+            # Verify that the pattern works correctly and generates the expected invoice name
+            assert invoice_pattern.to_string() == expected_invoice_name
+            assert invoice_pattern.to_string_with_number(
+                99
+            ) == expected_invoice_name.replace(str(invoice_number), "99")
+
+            # Verify that the regexp works correctly and can be matched to the expected invoice name
+            regexp = invoice_pattern.get_regexp()
+            print(f"Generated regexp: {regexp}")
+            match = re.match(regexp, expected_invoice_name)
+            assert match is not None
+            assert match.group(0) == expected_invoice_name
+
+            # Verify that the regexp is case insensitive
+            match_upper = re.match(regexp, expected_invoice_name.upper())
+            assert match_upper is not None
+            assert match_upper.group(0) == expected_invoice_name.upper()
+
+            # Use the pattern to find the number value from the expected invoice name
+            found_number = invoice_pattern.find_substitution_value(
+                "number", expected_invoice_name
+            )
+            assert found_number == str(invoice_number)

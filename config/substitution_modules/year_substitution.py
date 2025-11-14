@@ -9,7 +9,7 @@ from config.substitution_modules.substitution_module import (
 class YearSubstitution(SubstitutionModule):
 
     def match(self):
-        return r"\b\d{4}\b"  # Four numbers only
+        return r"\d{4}"  # Four numbers only
 
     @classmethod
     def name(cls):

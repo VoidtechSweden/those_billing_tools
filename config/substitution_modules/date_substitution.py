@@ -10,7 +10,7 @@ class DateSubstitution(SubstitutionModule):
     """Substitution module for current date in YYYY-MM-DD format."""
 
     def match(self) -> str:
-        return r"\b\d{4}-\d{2}-\d{2}\b"  # Date in YYYY-MM-DD format
+        return r"\d{4}-\d{2}-\d{2}"  # Date in YYYY-MM-DD format
 
     @classmethod
     def name(cls) -> str:

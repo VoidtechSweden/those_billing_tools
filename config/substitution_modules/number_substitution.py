@@ -12,7 +12,7 @@ class NumberSubstitution(SubstitutionModule):
         self.__invoice_number: int = 0
 
     def match(self) -> str:
-        return r"\b\d+\b"  # One or more numbers
+        return r"\d+"  # One or more numbers
 
     @classmethod
     def name(cls) -> str:

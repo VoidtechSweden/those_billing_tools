@@ -71,7 +71,9 @@ class Configuration:
             cls._instance._load()
         return cls._instance
 
-    def __populate_dataclasses_from_parser(self, parser) -> None:
+    def __populate_dataclasses_from_parser(
+        self, parser: configparser.ConfigParser
+    ) -> None:
         self.identification = IdentificationConfig(
             name=parser.get("identification", "name"),
             company=parser.get("identification", "company"),
@@ -98,6 +100,9 @@ class Configuration:
         )
         self.debug = DebugConfig(
             mail_to_self_only=parser.getboolean("DEBUG", "mail_to_self_only"),
+        )
+        self.__custom_placeholders = (
+            parser.items("placeholders") if parser.has_section("placeholders") else []
         )
 
     def _load(self) -> None:
@@ -138,7 +143,7 @@ class Configuration:
 
                     if section == "billing" and option == "invoice_pattern":
                         # Special handling for invoice pattern because it will be used programmatically
-                        invoice_pattern.create(value)
+                        invoice_pattern.create(value, self.__custom_placeholders)
                         if not invoice_pattern.contains_number():
                             assert (
                                 False
@@ -146,7 +151,7 @@ class Configuration:
                         self.billing.invoice_pattern = invoice_pattern
                     elif "{" in value and "}" in value:
                         replacement_pattern = ConfigPattern()
-                        replacement_pattern.create(value)
+                        replacement_pattern.create(value, self.__custom_placeholders)
                         parser.set(section, option, replacement_pattern.to_string())
                         substitution_performed = True
 

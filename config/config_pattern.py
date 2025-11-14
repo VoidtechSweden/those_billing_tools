@@ -3,6 +3,9 @@ from config.substitution_modules.substitution_module import (
     SubstitutionModule,
     SubstitutionModuleRegistry,
 )
+from config.substitution_modules.staticstring_substitution import (
+    StaticStringSubstitution,
+)
 
 
 class ConfigPattern:
@@ -10,10 +13,12 @@ class ConfigPattern:
     def __init__(self):
         self.__modules = []
 
-    def create(self, string):
+    def create(self, string, custom_placeholders):
         """Given a pattern string, extract and return a list of SubstitutionModule instances representing the pattern."""
 
-        def create_substitution_module(string: str) -> SubstitutionModule:
+        def create_substitution_module(
+            string: str, custom_placeholders
+        ) -> SubstitutionModule:
             if string.startswith("{") and string.endswith("}"):
                 # split on colon to allow parameters
                 substitution_split = string[1:-1].split(":")
@@ -22,17 +27,23 @@ class ConfigPattern:
                 if len(substitution_split) > 1:
                     substitution_param = substitution_split[1]
 
+                # Find built-in substitution modules
                 for (
                     substitution_class
                 ) in SubstitutionModuleRegistry.get_registered_modules():
                     if substitution_class.name() == substitution_name:
                         return substitution_class(substitution_param)
-                assert False, f"Unknown substitution '{substitution_name}'"
-            else:
-                from config.substitution_modules.staticstring_substitution import (
-                    StaticStringSubstitution,
-                )
 
+                # Find custom configured placeholders
+                custom_value = ""
+                for key, value in custom_placeholders:
+                    if key == substitution_name:
+                        custom_value = value
+                        break
+                assert custom_value, f"Unknown placeholder '{substitution_name}'"
+
+                return StaticStringSubstitution(custom_value)
+            else:
                 return StaticStringSubstitution(string)
 
         current = ""
@@ -45,7 +56,7 @@ class ConfigPattern:
                     in_braces = True
                     if current:
                         self.__modules.append(
-                            create_substitution_module(current)
+                            create_substitution_module(current, custom_placeholders)
                         )  # Adds static string before {
                     current = char
             elif char == "}":
@@ -53,7 +64,7 @@ class ConfigPattern:
                     in_braces = False
                     current += char
                     self.__modules.append(
-                        create_substitution_module(current)
+                        create_substitution_module(current, custom_placeholders)
                     )  # Adds substitution module based on whats inside {}
                     current = ""
                 else:
@@ -62,7 +73,7 @@ class ConfigPattern:
                 current += char
         if current:
             self.__modules.append(
-                create_substitution_module(current)
+                create_substitution_module(current, custom_placeholders)
             )  # Adds remaining static string
 
     def contains_number(self) -> bool:
