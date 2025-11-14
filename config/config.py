@@ -33,8 +33,12 @@ class SmtpConfig:
 class MailingConfig:
     invoice_recipient: str
     invoice_cc: str
+    invoice_subject: str
+    invoice_body: str
     send_pdf: bool
     pdf_recipient: str
+    pdf_subject: str
+    pdf_body: str
     smtp: SmtpConfig
 
 
@@ -90,8 +94,12 @@ class Configuration:
         self.mailing = MailingConfig(
             invoice_recipient=parser.get("mailing", "invoice_recipient"),
             invoice_cc=parser.get("mailing", "invoice_cc"),
+            invoice_subject=parser.get("mailing", "invoice_subject"),
+            invoice_body=parser.get("mailing", "invoice_body"),
             send_pdf=parser.getboolean("mailing", "send_pdf"),
             pdf_recipient=parser.get("mailing", "pdf_recipient"),
+            pdf_subject=parser.get("mailing", "pdf_subject"),
+            pdf_body=parser.get("mailing", "pdf_body"),
             smtp=SmtpConfig(
                 server=parser.get("mailing.smtp", "server"),
                 port=parser.getint("mailing.smtp", "port"),
