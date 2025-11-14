@@ -9,7 +9,7 @@ This document describes all configuration fields used in the application.
 
 ## `[billing]`
 - **invoices_path**: Directory path where invoice files are stored. All subdirectories are recursively searched.
-- **invoice_pattern**: Pattern for invoice filenames, supporting placeholders like `{number}` and `{company}`. See the [Placeholders](#placeholders) section below.
+- **invoice_pattern**: Pattern for invoice filenames to find, and to use when creating a invoice. Supporting placeholders, see [Invoice pattern placeholders](#invoice-pattern-placeholders) section below.
 - **template_path**: Directory path for invoice templates. No recursive search is used here.
 - **template_prefix**: Prefix used to identify invoice template files.
 - **create_pdf**: Boolean (`True`/`False`) to enable PDF creation for invoices.
@@ -32,31 +32,55 @@ This document describes all configuration fields used in the application.
 
 ## Placeholders
 
-Placeholders are special tokens used in configuration fields to dynamically insert values. Some placeholders can accept parameters by adding a colon (`:`) and the parameter after the placeholder name. 
-Example of this is `{month:swe}`
+Placeholders are special tokens used in configuration fields to dynamically insert values in the configuration.
 
-These placeholders are supported:
+| Static placeholders| Substitutes for value| 
+|----------------|----------------------------------------------------|
+| `{company}`    | Company name from `[identification]` section       |
+| `{email}`      | Email address from `[identification]` section      |
+| `{name}`       | Name from `[identification]` section               |
 
-- `{number}`: Inserts the invoice number when later entered.
-- `{currentdir}`: Inserts the current working directory path.
-- `{company}`: Inserts the company name from the `[identification]` section.
-- `{email}`: Inserts the email address from the `[identification]` section.
-- `{name}`: Inserts the personal or sender's name from the `[identification]` section.
-- `{date}`: Inserts the current date in the format `YYYY-MM-DD`.
-- `{year}`: Inserts the current year.
-- `{month}`: Inserts the current month in a human-readable format.  (e.g., "Januari")
-    - Parameters:  
-        - `swe`: Inserts the month name in Swedish. (Default)
-        - `eng`: Inserts the month name in English.
+| Dynamic placeholders| Substitutes for value| 
+|----------------|----------------------------------------------------|
+| `{currentdir}` | The current working directory path                 |
+| `{date}`       | Current date in `YYYY-MM-DD` format  (Using numbers)|
+| `{year}`       | Current year (e.g., `2024`)                        |
+| `{month}`      | Current month in human-readable format (e.g., "Januari") |
+
+### Placeholder parameters
+Some placeholders can accept parameters by adding a colon (`:`) and the parameter after the placeholder name. 
+
+- `{month}`
+    - **swe**: The month name in Swedish. `{month:swe}` → "Mars" 
+    - **eng**: The month name in English  `{month:swe}` → "March" 
 
 
 ### Invoice pattern placeholders
 
-Placeholders in invoice_pattern are used to generically match file name patterns. For example, you can use placeholders to represent any year, date, number, or other variable parts of a file name. This allows flexible matching, such as recognizing files like `2025 MyCompany_invoice_23.xlsx` by specifying the pattern like `{year} {company}_-_invoice_{number}`.
+Placeholders used in `invoice_pattern` are used to generically match file name patterns with a created regexp. For example, you can use placeholders to represent any year, date, number, or other variable parts of a file name. This allows flexible matching, for example by specifying the pattern like `{year} {company}-invoice_{number}`.
+This pattern will match any filename like these:
+- `2025 MyCompany-invoice_23.xlsx`
+- `2024 MyCompany-invoice_11.xlsx`
+- `2023 MyCompany-invoice_1.xlsx`
 
-### Defining Custom Placeholders
+| Static placeholder| Matches statically against                |
+|----------------|-----------------------------------------------------|
+| `{company}`    | Company name from `[identification]` section |
+| `{email}`      | Email address from `[identification]` section |
+| `{name}`       | Name from `[identification]` section |
 
-You can define your own custom placeholders by adding a `[placeholders]` section to your configuration file. Each entry in this section should specify a placeholder name and its corresponding value. Custom placeholders can be used in any field that supports placeholders, just like the built-in ones.
+| Dynamic Placeholder| Matches dynamically against                |
+|----------------|-----------------------------------------------------|
+| `{number}`     | Any number of any length |
+| `{date}`       | Any date in `YYYY-MM-DD` format (Using numbers) |
+| `{year}`       | Any four number year (e.g., `2024`)|
+| `{month}`      | Any month in human-readable format (e.g., "Januari") |
+
+When the invoice is saved, `invoice_pattern` will be used to generate a filename using the substitutions listed in [Placeholders](#placeholders)
+
+### Custom Static Placeholders
+
+You can define your own custom static placeholders by adding a `[placeholders]` section to your configuration file. Each entry in this section should specify a placeholder name and its corresponding value. Custom placeholders can then be used in any field that supports placeholders, just like the built-in ones.
 
 **Example:**
 ```ini
@@ -65,6 +89,6 @@ project=MyProject
 client_code=12345
 ```
 
-In your configuration fields, you can then use `{project}` or `{client_code}` to dynamically insert these values.
+In your configuration fields, you can then use `{project}` or `{client_code}` to insert these values.
 
 
