@@ -54,3 +54,17 @@ These placeholders are supported:
 
 Placeholders in invoice_pattern are used to generically match file name patterns. For example, you can use placeholders to represent any year, date, number, or other variable parts of a file name. This allows flexible matching, such as recognizing files like `2025 MyCompany_invoice_23.xlsx` by specifying the pattern like `{year} {company}_-_invoice_{number}`.
 
+### Defining Custom Placeholders
+
+You can define your own custom placeholders by adding a `[placeholders]` section to your configuration file. Each entry in this section should specify a placeholder name and its corresponding value. Custom placeholders can be used in any field that supports placeholders, just like the built-in ones.
+
+**Example:**
+```ini
+[placeholders]
+project=MyProject
+client_code=12345
+```
+
+In your configuration fields, you can then use `{project}` or `{client_code}` to dynamically insert these values.
+
+

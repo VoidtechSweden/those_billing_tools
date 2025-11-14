@@ -49,7 +49,7 @@ def test_template_configuration():
     """
 
     with temporary_config():
-        assert Configuration.instance().identification.company == "My Company"
+        assert Configuration.instance().identification.company == "MyCompany"
 
 
 def test_invalid_configuration():
@@ -101,6 +101,54 @@ def test_currentdir_substitution():
     with temporary_config(updated_fields=config_fields):
         assert Configuration.instance().billing.invoices_path.startswith(os.getcwd())
         assert Configuration.instance().billing.invoices_path.endswith("../testfolder/")
+
+
+def test_custom_placeholder():
+    """
+    TEST: Loading a configuration file with a custom placeholder substitution
+
+    EXPECTED: The custom placeholder is correctly applied
+    """
+
+    placeholdervalue = "placeholdervalue"
+    config_fields = [
+        ("placeholders", "placeholder1", placeholdervalue),
+        ("identification", "name", "{placeholder1}"),
+    ]
+
+    with temporary_config(updated_fields=config_fields):
+        assert Configuration.instance().identification.name == placeholdervalue
+
+
+def test_custom_placeholder_recursive():
+    """
+    TEST: Loading a configuration file with a custom placeholder substitution that references another custom placeholder
+
+    EXPECTED: The custom placeholders are correctly applied recursively
+    """
+
+    placeholdervalue = "placeholdervalue"
+
+    # One level of recursion
+    config_fields = [
+        ("placeholders", "placeholder1", "{placeholder2}"),
+        ("placeholders", "placeholder2", placeholdervalue),
+        ("identification", "name", "{placeholder1}"),
+    ]
+
+    with temporary_config(updated_fields=config_fields):
+        assert Configuration.instance().identification.name == placeholdervalue
+
+    # Several levels of recursion
+    config_fields = [
+        ("placeholders", "placeholder1", "{name}"),
+        ("placeholders", "placeholder2", placeholdervalue),
+        ("identification", "name", "{placeholder2}"),
+        ("identification", "company", "{placeholder1}"),
+    ]
+
+    with temporary_config(updated_fields=config_fields):
+        assert Configuration.instance().identification.company == placeholdervalue
 
 
 class TestInvoicePattern:
