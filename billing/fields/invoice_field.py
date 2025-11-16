@@ -8,7 +8,7 @@ class InvoiceField(ABC):
         self._process_value()
 
     @abstractmethod
-    def get_value(self) -> int | str:
+    def get_value(self) -> int | float | str:
         """Return the value for the field"""
 
         assert False, "You must implement get_value() method"

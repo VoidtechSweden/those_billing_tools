@@ -1,6 +1,11 @@
 #!/bin/sh
 
-RUN_MYPY="python3 -m pipenv run mypy --check-untyped-defs"
+if [ "$(uname -s)" = "Linux" ]; then
+    PYTHON_CMD="python3"
+else
+    PYTHON_CMD="python"
+fi
+RUN_MYPY="$PYTHON_CMD -m pipenv run mypy --check-untyped-defs"
 RET=0
 
 if [ "$1" = "all" ]; then

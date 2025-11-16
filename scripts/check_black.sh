@@ -1,6 +1,12 @@
 #!/bin/sh
 
-RUN_BLACK="python3 -m pipenv run black --check"
+if [ "$(uname -s)" = "Linux" ]; then
+    PYTHON_CMD="python3"
+else
+    PYTHON_CMD="python"
+fi
+RUN_BLACK="$PYTHON_CMD -m pipenv run black --check"
+
 RET=0
 
 if [ "$1" = "all" ]; then

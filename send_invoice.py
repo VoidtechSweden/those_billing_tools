@@ -14,7 +14,7 @@ def main():
     print("E-mailer for invoices")
 
     # Get invoice number
-    invoice_number = input_tools.input_number(
+    invoice_number = input_tools.input_integer(
         "Choose invoice number", billing_tools.get_latest_invoice_nr()
     )
 

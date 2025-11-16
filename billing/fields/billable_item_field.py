@@ -8,14 +8,14 @@ class BillableItemField(InvoiceField):
     def __init__(self, field_number, item_description):
         self._field_number = field_number
         self._item_description = item_description
-        self._billable_value = None
+        self._billable_value: float = 0.0
 
         super().__init__()
 
-    def get_value(self):
+    def get_value(self) -> float:
         return self._billable_value
 
-    def get_field(self):
+    def get_field(self) -> str:
         return self._field_number
 
     def _process_value(self):

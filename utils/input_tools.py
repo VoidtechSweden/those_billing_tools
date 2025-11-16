@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from utils import exit_tools
+import locale
 
 
 def input_password(prompt) -> str:
@@ -17,10 +18,11 @@ def input_password(prompt) -> str:
             print("Password can not be empty.")
 
 
-def input_number(prompt, default=None) -> int:
+def __input_number(prompt, default: float | int | None, force_integer) -> float | int:
     """
     Prompt the user for a number, with a default value
     """
+    value: float | int = -1
     while True:
         if default is None:
             user_input = input(f"{prompt}: ")
@@ -29,13 +31,36 @@ def input_number(prompt, default=None) -> int:
         if default is not None and user_input == "":
             return default
         try:
-            value = int(user_input)
+            if force_integer:
+                value = int(user_input)
+            else:
+                value = locale.atof(user_input)
             if value > 0:
                 return value
             else:
-                print("Please enter a positive integer.")
+                print(
+                    "Please enter a positive "
+                    + ("integer." if force_integer else "number.")
+                )
         except ValueError:
-            print("Invalid input. Please enter a positive integer.")
+            print(
+                "Invalid input. Please enter a positive "
+                + ("integer." if force_integer else "number.")
+            )
+
+
+def input_number(prompt, default: float | None = None) -> float:
+    """
+    Wrapper for __input_number to handle float inputs
+    """
+    return float(__input_number(prompt, default, False))
+
+
+def input_integer(prompt, default: int | None = None) -> int:
+    """
+    Wrapper for __input_number to handle integer inputs
+    """
+    return int(__input_number(prompt, default, True))
 
 
 def input_date(prompt, default) -> datetime:
