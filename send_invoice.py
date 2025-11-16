@@ -14,7 +14,7 @@ def main():
     print("E-mailer for invoices")
 
     # Get invoice number
-    invoice_number = input_tools.input_number(
+    invoice_number = input_tools.input_integer(
         "Choose invoice number", billing_tools.get_latest_invoice_nr()
     )
 
@@ -35,6 +35,7 @@ def main():
         cc_recipient=Configuration.instance().mailing.invoice_cc,
         attachment_path=invoices_path,
     )
+
     if not invoice_email.send():
         exit_tools.paused_exit("Could not send Excel invoice email")
 

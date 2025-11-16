@@ -1,6 +1,11 @@
 #!/bin/sh
 
-RUN_FLAKE8="python3 -m pipenv run flake8 --ignore=E501,E203,W503"
+if [ "$(uname -s)" = "Linux" ]; then
+    PYTHON_CMD="python3"
+else
+    PYTHON_CMD="python"
+fi
+RUN_FLAKE8="$PYTHON_CMD -m pipenv run flake8 --ignore=E501,E203,W503"
 RET=0
 
 if [ "$1" = "all" ]; then

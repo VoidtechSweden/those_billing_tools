@@ -19,10 +19,10 @@ This document describes all configuration fields used in the application.
 - **invoice_recipient**: Primary email address to send Excel invoices to.
 - **invoice_cc**: Email address to receive a copy (CC) of the Excel invoice.
 - **invoice_subject**: Subject line for the email when sending Excel invoices.
-- **invoice_body**: Body text for the email when sending Excel invoices.
+- **invoice_body**: Body text for the email when sending Excel invoices. Supports multiline text if the newlines are indented. See template.config
 - **send_pdf**: Boolean (`True`/`False`) to enable sending PDF invoices in addition to Excel invoices.
 - **pdf_recipient**: Email address to send the PDF version of the invoice to.
-- **pdf_subject**: Subject line for the email when sending PDF invoices.
+- **pdf_subject**: Subject line for the email when sending PDF invoices. Supports multiline text if the newlines are indented. See template.config
 - **pdf_body**: Body text for the email when sending PDF invoices.
 > **Note:** Your own email address (from the `[identification]` section) will always be added as a BCC recipient when invoices are sent.
 

@@ -1,3 +1,4 @@
+from email.utils import formatdate
 from email.message import EmailMessage
 import mimetypes
 import os
@@ -64,6 +65,7 @@ class Email:
 
         # Create the container email message.
         msg = EmailMessage()
+        msg["Date"] = formatdate(localtime=True)
         msg["Subject"] = self.subject_text
         msg["From"] = Configuration.instance().identification.email
         if Configuration.instance().debug.mail_to_self_only:

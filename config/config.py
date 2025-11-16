@@ -127,8 +127,8 @@ class Configuration:
         print(f"Loading configuration from '{self.config_file}'")
         parser = configparser.ConfigParser()
         templateparser = configparser.ConfigParser()
-        templateparser.read(template_file)
-        parser.read(self.config_file)
+        templateparser.read(template_file, encoding="utf-8")
+        parser.read(self.config_file, encoding="utf-8")
 
         # Validate config against template
         for section in templateparser.sections():

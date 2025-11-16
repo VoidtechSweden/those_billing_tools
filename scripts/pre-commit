@@ -2,10 +2,15 @@
 
 echo "Running pre-commit checks..."
 
+if [ "$(uname -s)" = "Linux" ]; then
+    PYTHON_CMD="python3"
+else
+    PYTHON_CMD="python"
+fi
+
 echo
 echo "1. Installing dependencies ..."
-python3 -m pipenv sync 
-
+$PYTHON_CMD -m pipenv sync 
 echo
 echo "2. Checking formatting with black..."
 ./scripts/check_black.sh
@@ -35,7 +40,7 @@ fi
 
 echo 
 echo "5. Checking config fields consistency..."
-python3 scripts/check_config_fields.py
+$PYTHON_CMD scripts/check_config_fields.py
 if [ $? -ne 0 ]; then
     echo
     echo -e "\033[1;31mConfig fields consistency check failed. Please fix the issues.\033[0m"
@@ -50,5 +55,3 @@ if [ $? -ne 0 ]; then
     echo -e "\033[1;31mUnit tests failed. Please fix the issues.\033[0m"
     exit 1
 fi
-
-#TODO unit tests

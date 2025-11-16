@@ -18,7 +18,7 @@ class InvoiceNumberField(InvoiceField):
         return "G18"
 
     def _process_value(self) -> None:
-        self.__invoice_number = input_tools.input_number(
+        self.__invoice_number = input_tools.input_integer(
             "Enter invoice number", billing_tools.get_latest_invoice_nr() + 1
         )
 
