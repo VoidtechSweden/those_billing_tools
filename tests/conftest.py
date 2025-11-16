@@ -13,7 +13,7 @@ def temporary_config(updated_fields=[], invalid=False):
     """Create and use temporary configuration file for testing purposes."""
 
     config = configparser.ConfigParser()
-    config.read(CONFIG_TEMPLATE_PATH)
+    config.read(CONFIG_TEMPLATE_PATH, encoding="utf-8")
 
     for section, option, value in updated_fields:
         if not config.has_section(section):
@@ -29,6 +29,7 @@ def temporary_config(updated_fields=[], invalid=False):
         delete=True,
         delete_on_close=False,
         suffix=".config",
+        encoding="utf-8",
     ) as tmp:
         config.write(tmp)
         tmp.flush()

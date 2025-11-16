@@ -35,6 +35,7 @@ def main():
         cc_recipient=Configuration.instance().mailing.invoice_cc,
         attachment_path=invoices_path,
     )
+
     if not invoice_email.send():
         exit_tools.paused_exit("Could not send Excel invoice email")
 

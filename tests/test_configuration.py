@@ -119,6 +119,26 @@ def test_custom_placeholder_recursive():
         assert Configuration.instance().identification.company == placeholdervalue
 
 
+def test_swedish_characters_in_configuration():
+    """
+    TEST: Loading a configuration file with Swedish characters
+
+    EXPECTED: The Swedish characters are correctly loaded
+    """
+
+    company = "Företag med åäö"
+    email = "kontakt@företag.se"
+
+    config_fields = [
+        ("identification", "company", company),
+        ("identification", "email", email),
+    ]
+
+    with temporary_config(updated_fields=config_fields):
+        assert Configuration.instance().identification.company == company
+        assert Configuration.instance().identification.email == email
+
+
 class TestInvoicePattern:
 
     @pytest.mark.parametrize(
