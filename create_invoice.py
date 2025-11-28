@@ -1,6 +1,9 @@
 #!/usr/bin/env python
-
+# flake8: noqa: E402
 from utils.platform_tools import ensure_python3
+
+ensure_python3()
+
 from billing.fields.invoice_date_field import InvoiceDateField
 from billing.fields.invoice_number_field import InvoiceNumberField
 from billing.fields.item_fields_generator import ItemFieldsGenerator
@@ -54,7 +57,5 @@ def main():
 
 
 if __name__ == "__main__":
-    ensure_python3()
-
     sys.excepthook = exit_tools.ows_abort_handler
     main()

@@ -27,13 +27,11 @@ def ensure_python3():
     Ensure that the script is running under Python 3
     """
     if sys.version_info[0] < 3:
-        print("This script requires Python 3. Restarting with python3...")
         python3 = "python3"
         if sys.platform == "win32":
             python3 = "py -3"
         # make sure paths are relative in argv
         sys.argv = [os.path.relpath(arg) for arg in sys.argv]
-        print(f"Re-running with: {python3} {' '.join(sys.argv)}")
         os.execvp(python3.split()[0], python3.split() + sys.argv)
 
 
