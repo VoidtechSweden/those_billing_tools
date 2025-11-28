@@ -2,11 +2,11 @@ from billing import billing_tools
 from billing.fields.invoice_field import InvoiceField
 from billing.pdf_converter import InvoicePdfConverter
 from config.config import Configuration
-from utils import import_tools
+from utils import platform_tools
 
 import os
 
-openpyxl = import_tools.try_import("openpyxl")
+openpyxl = platform_tools.try_import("openpyxl")
 
 BILL_FILE_TYPE = ".xlsx"
 

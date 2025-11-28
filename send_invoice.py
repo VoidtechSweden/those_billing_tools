@@ -1,4 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
+
+from utils.platform_tools import ensure_python3
 
 import os
 import sys
@@ -55,5 +57,6 @@ def main():
 
 
 if __name__ == "__main__":
+    ensure_python3()
     sys.excepthook = exit_tools.ows_abort_handler
     main()

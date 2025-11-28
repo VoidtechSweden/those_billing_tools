@@ -9,7 +9,11 @@ def paused_exit(
 
 def ows_abort_handler(exc_type, exc_value, exc_traceback) -> None:
     """Handle unhandled exceptions and pause the exit to allow user to read the error."""
-    paused_exit(message=f"Aborted due to error: {exc_value}", exit_code=1)
+    # identify if used pressed ctrl+c
+    if issubclass(exc_type, KeyboardInterrupt):
+        paused_exit(message="Aborted by user", exit_code=1)
+    else:
+        paused_exit(message=f"Aborted due to error: {exc_value}", exit_code=1)
 
 
 if __name__ == "__main__":
