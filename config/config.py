@@ -26,7 +26,6 @@ class BillingConfig:
 class SmtpConfig:
     server: str
     port: int
-    username: str
 
 
 @dataclass
@@ -103,7 +102,6 @@ class Configuration:
             smtp=SmtpConfig(
                 server=parser.get("mailing.smtp", "server"),
                 port=parser.getint("mailing.smtp", "port"),
-                username=parser.get("mailing.smtp", "username"),
             ),
         )
         self.debug = DebugConfig(

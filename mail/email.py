@@ -10,7 +10,7 @@ from utils import input_tools
 class server_settings:
     SMTP_SERVER = Configuration.instance().mailing.smtp.server
     SMTP_PORT = Configuration.instance().mailing.smtp.port
-    SMTP_USER = Configuration.instance().mailing.smtp.username
+    SMTP_USER = Configuration.instance().identification.email
     SMTP_PASSWORD = ""
 
 

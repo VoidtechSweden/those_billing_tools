@@ -6,10 +6,11 @@ This document describes all configuration fields used in the application.
 - **name**: Your personal or sender's name.
 - **company**: The company name associated with the billing.
 - **email**: Email address used for identification and sending invoices.
+> **Note:**: Email will also be used as Username for SMTP authentication, to ensure that email spoofing is not accidentally performed.
 
 ## `[billing]`
 - **invoices_path**: Directory path where invoice files are stored. All subdirectories are recursively searched.
-- **invoice_pattern**: Pattern for invoice filenames to find, and to use when creating a invoice. Supporting placeholders, see [Invoice pattern placeholders](#invoice-pattern-placeholders) section below.
+- **invoice_pattern**: Pattern for invoice filenames to find, and to use when creating a invoice. Supports placeholders, see [Invoice pattern placeholders](#invoice-pattern-placeholders) section below.
 - **template_path**: Directory path for invoice templates. No recursive search is used here.
 - **template_prefix**: Prefix used to identify invoice template files.
 - **create_pdf**: Boolean (`True`/`False`) to enable PDF creation for invoices.
@@ -29,7 +30,6 @@ This document describes all configuration fields used in the application.
 ## `[mailing.smtp]`
 - **port**: SMTP server port for sending emails.
 - **server**: SMTP server address.
-- **username**: Username for SMTP authentication.
 
 ## `[DEBUG]`
 - **mail_to_self_only**: Boolean (`True`/`False`) to restrict email sending to the sender only, useful for testing.
@@ -47,9 +47,9 @@ Placeholders are special tokens used in configuration fields to dynamically inse
 | Dynamic placeholders| Substitutes for value| 
 |----------------|----------------------------------------------------|
 | `{currentdir}` | The current working directory path                 |
-| `{date}`       | Current date in `YYYY-MM-DD` format  (Using numbers)|
-| `{year}`       | Current year (e.g., `2024`)                        |
-| `{month}`      | Current month in human-readable format (e.g., "Januari") |
+| `{date}`       | Current date in `YYYY-MM-DD` format  (e.g., `2025-11-23`)|
+| `{year}`       | Current year (e.g., `2025`)                        |
+| `{month}`      | Current month in human-readable format (e.g., "November") |
 
 ### Placeholder parameters
 Some placeholders can accept parameters by adding a colon (`:`) and the parameter after the placeholder name. 
@@ -61,7 +61,7 @@ Some placeholders can accept parameters by adding a colon (`:`) and the paramete
 
 ### Invoice pattern placeholders
 
-Placeholders used in `invoice_pattern` are used to generically match file name patterns with a created regexp. For example, you can use placeholders to represent any year, date, number, or other variable parts of a file name. This allows flexible matching, for example by specifying the pattern like `{year} {company}-invoice_{number}`.
+Placeholders used in `invoice_pattern` are used to generically match file name patterns with a created regexp. For example, you can use placeholders to represent any year, date, number, or other variable parts of a file name. Think of it like a simplified regexp. This allows flexible matching, for example by specifying the pattern like `{year} {company}-invoice_{number}`.
 This pattern will match any filename like these:
 - `2025 MyCompany-invoice_23.xlsx`
 - `2024 MyCompany-invoice_11.xlsx`
@@ -76,11 +76,11 @@ This pattern will match any filename like these:
 | Dynamic Placeholder| Matches dynamically against                |
 |----------------|-----------------------------------------------------|
 | `{number}`     | Any number of any length |
-| `{date}`       | Any date in `YYYY-MM-DD` format (Using numbers) |
-| `{year}`       | Any four number year (e.g., `2024`)|
-| `{month}`      | Any month in human-readable format (e.g., "Januari") |
+| `{date}`       | Any date in `YYYY-MM-DD` format (e.g., `2025-11-23`) |
+| `{year}`       | Any four number year (e.g., `2025`)|
+| `{month}`      | Any month in human-readable format (e.g., "November") |
 
-When the invoice is saved, `invoice_pattern` will be used to generate a filename using the substitutions listed in [Placeholders](#placeholders)
+When the invoice is saved, `invoice_pattern` will be used to generate a new filename using the substitutions listed in [Placeholders](#placeholders), using the new invoice number for `{number}`
 
 ### Custom Static Placeholders
 
