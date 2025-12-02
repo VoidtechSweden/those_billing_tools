@@ -8,6 +8,7 @@ from utils import input_tools
 ITEM_DESCRIPTION_COLUMN = "B"
 ITEM_VALUE_COLUMN = "C"
 ITEM_UNIT_COLUMN = "D"
+ITEM_PRICE_COLUMN = "E"
 
 
 class ItemFieldsGenerator:
@@ -46,6 +47,12 @@ class ItemFieldsGenerator:
             if item_description is None or item_unit is None:
                 # If either description or unit is missing, skip this row
                 continue
+
+            item_price = ws[f"{ITEM_PRICE_COLUMN}{item_row}"].value
+            if item_price is None or item_price == 0 or item_unit == "0":
+                # TODO, Can not handle expendatures correctly yet, as it needs to fill in price also
+                continue
+
             optional_fields.append(
                 (f"{ITEM_VALUE_COLUMN}{item_row}", f"{item_description} ({item_unit})")
             )

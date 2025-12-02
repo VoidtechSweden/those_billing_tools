@@ -46,7 +46,6 @@ def main():
         )
 
     # Generate the fields for billing hours or other items
-    # TODO, Utlägg is only filling in the number, not the price
     invoice.add_fields(ItemFieldsGenerator.generate_item_fields(template_file))
 
     # Create and save the invoices
